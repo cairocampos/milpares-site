@@ -18,7 +18,6 @@ jobs:
       # uses: easingthemes/ssh-deploy@c711f2c3391cac2876bf4c833590077f02e4bcb8
       uses: easingthemes/ssh-deploy@v2.2.11
       with:
-        package: dist/
         # Private Key
         SSH_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
         # Remote host
