@@ -32,6 +32,6 @@ jobs:
         # Target directory
         TARGET: ${{ secrets.SSH_TARGET }} # optional, default is /home/REMOTE_USER/
         # Arguments to pass to rsync
-        ARGS: # optional, default is -rltgoDzvO
+        #ARGS: # optional, default is -rltgoDzvO
         # An array of folder to exclude
-        EXCLUDE: # optional, default is 
+        #EXCLUDE: # optional, default is 
