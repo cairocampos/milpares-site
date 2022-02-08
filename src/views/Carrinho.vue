@@ -14,7 +14,7 @@
         <div class="carrinho-details">
           <div class="products-carrinho">
             <div class="image">
-              <img src="@/assets/images/chinelo.png" alt="Chinelo Exemplo" />
+              <img src="assets/images/chinelo.png" alt="Chinelo Exemplo" />
             </div>
 
             <div class="text-carrinho">

@@ -133,9 +133,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import shoe1 from '@/assets/images/shoe1.png';
-import shoe2 from '@/assets/images/shoe2.png';
-import shoe3 from '@/assets/images/shoe3.png';
 import useConstants from '@/composables/useConstants';
 
 export default defineComponent({
@@ -145,17 +142,17 @@ export default defineComponent({
       {
         nome: 'Sapatilhas',
         categoria: 'sapatilhas',
-        imagem: shoe1,
+        imagem: '/assets/images/shoe1.png',
       },
       {
         nome: 'Mules',
         categoria: 'mules',
-        imagem: shoe2,
+        imagem: '/assets/images/shoe2.png',
       },
       {
         nome: 'Sandálias',
         categoria: 'sandalias',
-        imagem: shoe3,
+        imagem: '/assets/images/shoe3.png',
       },
     ];
 

@@ -12,14 +12,14 @@
     <main>
       <section class="products-display-section">
         <div class="pictures-options">
-          <img src="@/assets/images/chinelo.png" alt="Foto Chinelo" />
-          <img src="@/assets/images/chinelo.png" alt="Foto Chinelo" />
-          <img src="@/assets/images/chinelo.png" alt="Foto Chinelo" />
-          <img src="@/assets/images/chinelo.png" alt="Foto Chinelo" />
+          <img src="assets/images/chinelo.png" alt="Foto Chinelo" />
+          <img src="assets/images/chinelo.png" alt="Foto Chinelo" />
+          <img src="assets/images/chinelo.png" alt="Foto Chinelo" />
+          <img src="assets/images/chinelo.png" alt="Foto Chinelo" />
         </div>
 
         <div class="products-image-div">
-          <img src="@/assets/images/chinelo.png" alt="Foto Chinelo" />
+          <img src="assets/images/chinelo.png" alt="Foto Chinelo" />
         </div>
 
         <div class="slideshow-container">
@@ -124,7 +124,7 @@
         <div class="product-card-div">
           <div class="card">
             <div class="chinelo-div">
-              <img src="@/assets/images/chinelo.png" alt="" />
+              <img src="assets/images/chinelo.png" alt="" />
             </div>
             <div>
               <h3>Chinelo Emborrachado</h3>
@@ -139,7 +139,7 @@
 
           <div class="card">
             <div class="chinelo-div">
-              <img src="@/assets/images/chinelo.png" alt="" />
+              <img src="assets/images/chinelo.png" alt="" />
             </div>
             <div>
               <h3>Chinelo Emborrachado</h3>
@@ -154,7 +154,7 @@
 
           <div class="card">
             <div class="chinelo-div">
-              <img src="@/assets/images/chinelo.png" alt="" />
+              <img src="assets/images/chinelo.png" alt="" />
             </div>
             <div>
               <h3>Chinelo Emborrachado</h3>
@@ -169,7 +169,7 @@
 
           <div class="card">
             <div class="chinelo-div">
-              <img src="@/assets/images/chinelo.png" alt="" />
+              <img src="assets/images/chinelo.png" alt="" />
             </div>
             <div>
               <h3>Chinelo Emborrachado</h3>
@@ -184,7 +184,7 @@
 
           <div class="card">
             <div class="chinelo-div">
-              <img src="@/assets/images/chinelo.png" alt="" />
+              <img src="assets/images/chinelo.png" alt="" />
             </div>
             <div>
               <h3>Chinelo Emborrachado</h3>
@@ -199,7 +199,7 @@
 
           <div class="card">
             <div class="chinelo-div">
-              <img src="@/assets/images/chinelo.png" alt="" />
+              <img src="assets/images/chinelo.png" alt="" />
             </div>
             <div>
               <h3>Chinelo Emborrachado</h3>
