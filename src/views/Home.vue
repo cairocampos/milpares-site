@@ -2,7 +2,7 @@
   <main class="main-content">
     <section class="banner">
       <div class="banner-shoe-image-div">
-        <img src="@/assets/images/banner-shoe.png" alt="Banner shoes" />
+        <img src="assets/images/banner-shoe.png" alt="Banner shoes" />
       </div>
       <div class="banner-text-div">
         <h1>MIL PARES</h1>
@@ -43,28 +43,28 @@
           <div class="vantagens-div">
             <div>
               <img
-                src="@/assets/images/reven-icon1.png"
+                src="assets/images/reven-icon1.png"
                 alt="Icone de Vantagens"
               />
               <span>É grátis! Não precisa comprar nenhum kit</span>
             </div>
             <div>
               <img
-                src="@/assets/images/reven-icon2.png"
+                src="assets/images/reven-icon2.png"
                 alt="Icone de Vantagens"
               />
               <span>Mais de 1.000 produtos para lucrar!</span>
             </div>
             <div>
               <img
-                src="@/assets/images/reven-icon3.png"
+                src="assets/images/reven-icon3.png"
                 alt="Icone de Vantagens"
               />
               <span>Trabalhe sem chefe, faça seus horários</span>
             </div>
             <div>
               <img
-                src="@/assets/images/reven-icon4.png"
+                src="assets/images/reven-icon4.png"
                 alt="Icone de Vantagens"
               />
               <span
@@ -74,7 +74,7 @@
             </div>
           </div>
           <div class="revendedora-div">
-            <img src="@/assets/images/revendedora.png" alt="Foto revendedora" />
+            <img src="assets/images/revendedora.png" alt="Foto revendedora" />
           </div>
         </div>
         <div class="revendedora-button-div">
@@ -86,7 +86,7 @@
     <section class="franqueado-container">
       <div class="franqueado-banner">
         <img
-          src="@/assets/images/franqueado-banner.png"
+          src="assets/images/franqueado-banner.png"
           alt="banner seja franquedo"
         />
       </div>
@@ -295,7 +295,7 @@ export default defineComponent({
 
 /* ============ Revendedores Start ============ */
 .revendedores-container {
-  background-image: url("../assets/images/grey-bg.png");
+  background-image: url("/assets/images/grey-bg.png");
   padding: 3rem 0rem 0rem 3rem;
 }
 
@@ -503,7 +503,7 @@ export default defineComponent({
   }
 
   .revendedores-container {
-    background-image: url("../assets/images/grey-bg.png");
+    background-image: url("/assets/images/grey-bg.png");
     padding: 2.5rem 0rem 0rem 1rem;
   }
 

@@ -4,7 +4,7 @@
       <router-link to="/">
         <img
           class="header-logo"
-          src="@/assets/images/logo.png"
+          src="/assets/images/logo.png"
           alt="Header Logo"
         />
       </router-link>
@@ -18,7 +18,7 @@
         <li><a :href="PAINEL_MILPARES" target="_blank">Revendedor</a></li>
         <li>
           <router-link to="/carrinho" class="cart-bag">
-            <img src="@/assets/images/cart.png" alt="Cart Logo" />
+            <img src="assets/images/cart.png" alt="Cart Logo" />
             <span class="cart-content-count">2</span>
           </router-link>
         </li>
