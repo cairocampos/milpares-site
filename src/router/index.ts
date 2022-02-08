@@ -1,5 +1,8 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import Home from '../views/Home.vue';
+import Produtos from '../views/Produtos.vue';
+import Produto from '../views/Produto.vue';
+import Carrinho from '../views/Carrinho.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -8,18 +11,28 @@ const routes: Array<RouteRecordRaw> = [
     component: Home,
   },
   {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue'),
+    path: '/produtos/:type?',
+    name: 'Produtos',
+    component: Produtos,
+  },
+  {
+    path: '/produto/:id',
+    name: 'Produto',
+    component: Produto,
+  },
+  {
+    path: '/carrinho',
+    name: 'Carrinho',
+    component: Carrinho,
   },
 ];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+  scrollBehavior() {
+    return window.scrollTo({ top: 0, behavior: 'smooth' });
+  },
 });
 
 export default router;

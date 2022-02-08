@@ -1,30 +1,41 @@
 <template>
   <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+    <AppHeader/>
   </div>
-  <router-view/>
+  <router-view v-slot="{ Component, route }">
+    <transition name="fade" mode="out-in" >
+      <component :is="Component" :key="route.path" />
+    </transition>
+  </router-view>
+  <AppFooter />
 </template>
 
+<script lang="ts">
+import { defineComponent } from 'vue';
+import AppHeader from '@/components/AppHeader.vue';
+import AppFooter from '@/components/AppFooter.vue';
+
+export default defineComponent({
+  components: {
+    AppHeader,
+    AppFooter,
+  },
+  setup() {
+    //
+  },
+});
+</script>
+
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+.fade-enter-active,
+.fade-leave-active {
+  transition: all .3s;
 }
 
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateX(-100px);
 }
+
 </style>

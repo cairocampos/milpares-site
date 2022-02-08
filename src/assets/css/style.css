@@ -1,0 +1,371 @@
+/* ============ Font-Face Start Start ============ */
+
+@font-face {
+  font-family: "Gotham-Black";
+  src: url("../fonts/GothamBlack.otf");
+}
+@font-face {
+  font-family: "Gotham-Bold";
+  src: url("../fonts/GothamBold.ttf");
+}
+@font-face {
+  font-family: "Gotham-Book";
+  src: url("../fonts/GothamBook.ttf");
+}
+@font-face {
+  font-family: "Gotham-Book-Italic";
+  src: url("../fonts/GothamBookItalic.ttf");
+}
+@font-face {
+  font-family: "Gotham-Bold-Italic";
+  src: url("../fonts/GothamBoldItalic.ttf");
+}
+@font-face {
+  font-family: "Gotham-Light";
+  src: url("../fonts/GothamLight.ttf");
+}
+@font-face {
+  font-family: "Gotham-Light-Italic";
+  src: url("../fonts/GothamLightItalic.ttf");
+}
+@font-face {
+  font-family: "Gotham-Medium-Italic";
+  src: url("../fonts/GothamMediumItalic.ttf");
+}
+@font-face {
+  font-family: "Gotham-Thin";
+  src: url("../fonts/Gotham-Thin.otf");
+}
+@font-face {
+  font-family: "Gotham-Thin-Italic";
+  src: url("../fonts/Gotham-ThinItalic.otf");
+}
+@font-face {
+  font-family: "Gotham-Ultra-Italic";
+  src: url("../fonts/Gotham-UltraItalic.otf");
+}
+@font-face {
+  font-family: "Gotham-XLight";
+  src: url("../fonts/Gotham-XLight.otf");
+}
+@font-face {
+  font-family: "Gotham-XLight-Italic";
+  src: url("../fonts/Gotham-XLightItalic.otf");
+}
+/* @font-face {
+  font-family: "";
+  src: url("../fonts/GothamLight.otf");
+}
+@font-face {
+  font-family: "";
+  src: url("../fonts/GothamLight.otf");
+} */
+
+/* ============ Font-Face Start End ============ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  list-style: none;
+}
+
+/* ============ Header Start ============ */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding: 5rem;
+  font-family: Gotham-Book;
+  white-space: nowrap;
+}
+
+.header-logo {
+  width: 18rem;
+}
+
+.cart-bag {
+  position: relative;
+}
+
+.cart-content-count {
+  display: 
+  
+  id;
+  place-items: center;
+  background-color: #ef2866;
+  color: #eeeeee;
+  font-size: 1rem;
+  width: 25px;
+  height: 25px;
+  border-radius: 50em;
+  position: absolute;
+  right: -5px;
+  font-size: 14px;
+  top: -20px;
+  font-weight: 600;
+}
+
+.header-links-div {
+  display: flex;
+  align-items: end;
+}
+
+.header-links-div ul {
+  display: flex;
+  gap: 2.5rem;
+}
+
+.header-links-div ul:nth-child(2) {
+  display: none;
+}
+
+#headerSidenav ul li:nth-child(2) {
+  color: #ef2765;
+  font-size: 900;
+}
+
+.header-links-div img {
+  width: 2.5rem;
+}
+
+.header-links-div li a {
+  color: #3e3e3e;
+  font-size: 1.5rem;
+}
+
+.header-links-div li:hover {
+  text-decoration: underline;
+}
+.side-categories {
+  padding: 0 1rem;
+}
+
+.side-categories hr {
+  background-color: #f02866;
+  border: 0;
+  width: 180px;
+  height: 1px;
+}
+
+.side-categories h3 {
+  padding: 0.8rem 0;
+  padding-left: 0.7rem;
+  font-weight: 900;
+  color: #f02866;
+  font-family: Gotham-Light-Italic;
+}
+
+.side-categories ul {
+  font-family: Gotham-Book;
+  padding: 1rem;
+}
+
+.side-categories ul li {
+  transition: 0.3s;
+  margin-bottom: 15px;
+  font-weight: 900;
+}
+
+.side-categories ul li:hover {
+  text-decoration: underline 2px;
+  color: #ef2765;
+  cursor: pointer;
+}
+
+.sidenav {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #fff;
+  box-shadow: 0px 0px 3px #333;
+  overflow-x: hidden;
+  transition: 0.3s;
+}
+
+.sidenav ul {
+  padding: 3rem;
+}
+
+.sidenav ul li {
+  margin-bottom: 1rem;
+  font-family: Gotham-Light;
+  font-weight: 900;
+}
+
+.sidenav ul li:hover {
+  color: #e61655;
+  text-decoration: underline 3px solid #e61655;
+}
+
+.closebtn {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #fff;
+  position: absolute;
+  top: 0;
+  right: 10px;
+}
+
+.side-nav-bg {
+  background-color: #333;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  opacity: 0.5;
+  position: fixed;
+  display: none;
+}
+
+.pink-side-nav-banner {
+  background-color: #e61655;
+  color: #fff;
+  font-family: Gotham-Light-Italic;
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.openNav-div {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding-top: 3rem;
+}
+
+.openNav-div button {
+  border: none;
+  letter-spacing: 2px;
+  border-top: 1px solid #e61655;
+  border-bottom: 1px solid #e61655;
+  padding: 0.5rem 1.4rem;
+  font-size: 1.4rem;
+  color: #e61655;
+  background-color: #fff;
+  font-family: Gotham-Medium-Italic;
+}
+
+.openNav-div button i {
+  font-weight: 900;
+  color: rgb(0, 0, 0);
+  font-size: 2rem;
+  float: right;
+  position: relative;
+  left: 35px;
+}
+
+.closebtn {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #fff;
+  position: absolute;
+  top: 0;
+  right: 10px;
+}
+
+.side-nav-bg {
+  background-color: #333;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  opacity: 0.5;
+  position: fixed;
+  display: none;
+}
+
+.footer {
+  background-color: #eeeeee;
+  text-align: center;
+  font-family: Gotham-Bold;
+  color: #827e7e;
+  padding: 3.5rem 0;
+}
+
+.footer h2:first-child {
+  color: #5e5e5e;
+  padding-bottom: 2rem;
+}
+
+.cart {
+  display: flex;
+  justify-content: space-around;
+}
+
+.cart img {
+  width: 28px;
+}
+
+@media only screen and (max-width: 700px) {
+  .footer {
+    padding: 2rem 0;
+  }
+
+  .footer h2 {
+    font-size: 0.7rem;
+  }
+
+  .footer h2:first-child {
+    color: #5e5e5e;
+    padding-bottom: 1rem;
+  }
+}
+
+@media screen and (max-width: 1470px) {
+  .header {
+    padding: 2rem;
+  }
+
+  .header-logo {
+    width: 13rem;
+  }
+
+  .header-links-div ul {
+    gap: 1.5rem;
+  }
+
+  .header-links-div img {
+    width: 1.8rem;
+  }
+
+  .header-links-div li a {
+    color: #3e3e3e;
+    font-size: 1.3rem;
+  }
+
+  .cart-content-count {
+    width: 20px;
+    height: 20px;
+    right: -8px;
+    font-size: 10px;
+    top: -15px;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+@media screen and (max-width: 1134px) {
+  .header {
+    padding: 1rem;
+  }
+
+  .header-logo {
+    width: 10rem;
+  }
+
+  .header-links-div ul:first-child {
+    display: none;
+  }
+
+  .header-links-div ul:nth-child(2) {
+    display: block;
+  }
+
+  .header-links-div li:hover {
+    text-decoration: none;
+  }
+}
+
+/* ============ Header End ============ */
