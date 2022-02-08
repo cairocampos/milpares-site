@@ -5,12 +5,15 @@
         <hr />
         <h3>Categorias</h3>
         <hr />
-        <ul>
-          <li>Botas</li>
-          <li>Chinelos</li>
-          <li>Mocassim</li>
-          <li>Mules</li>
-          <li>Sapatilhas</li>
+        <ul class="categorias">
+          <li
+            v-for="categoria in categorias"
+            :key="categoria.nome"
+            @click="categoriaSelected = categoria.nome"
+            :class="{active: categoriaSelected == route.query?.categoria}"
+            >
+            {{categoria.nome}}
+          </li>
         </ul>
       </div>
 
@@ -208,6 +211,59 @@
   </section>
 </template>
 
+<script lang="ts">
+import { ICategoria } from '@/interfaces/ICategoria';
+import { IProduto } from '@/interfaces/IProduto';
+import { http } from '@/service';
+import {
+  defineComponent, onMounted, ref, watch,
+} from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+
+export default defineComponent({
+  setup() {
+    const categoriaSelected = ref('');
+    const categorias = ref<ICategoria[]>([]);
+    const produtos = ref<IProduto[]>([]);
+    const route = useRoute();
+    const router = useRouter();
+
+    const fetchCategorias = async () => {
+      const { data } = await http.get<ICategoria[]>('/categorias-produtos');
+      categorias.value = data;
+    };
+
+    const fetchProdutos = async () => {
+      const { data } = await http.get<{data: IProduto[]}>('/produtos/catalogo', {
+        params: {
+          categoria: categoriaSelected.value,
+        },
+      });
+      produtos.value = data.data;
+    };
+
+    watch(categoriaSelected, (val) => {
+      const { query } = route;
+      router.push({ query: { ...query, categoria: val } });
+      fetchProdutos();
+    });
+
+    onMounted(() => {
+      const categoriaQuery = route.query?.categoria;
+      categoriaSelected.value = String(categoriaQuery ?? '');
+      fetchCategorias();
+      fetchProdutos();
+    });
+
+    return {
+      categoriaSelected,
+      categorias,
+      route,
+    };
+  },
+});
+</script>
+
 <style scoped>
 .header {
   border-bottom: 10px solid #e61655;
@@ -246,6 +302,11 @@
   transition: 0.3s;
   margin-bottom: 15px;
   font-weight: 900;
+}
+
+.categorias li.active {
+  text-decoration: underline 2px;
+  color: #ef2765;
 }
 
 .side-categories ul li:hover {
