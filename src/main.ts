@@ -1,8 +1,12 @@
 import { createApp } from 'vue';
+import Loading from '@/components/global/Loading.vue';
 import App from './App.vue';
 import router from './router';
 import store from './store';
 
-createApp(App).use(store).use(router).mount('#app');
+createApp(App)
+  .component('Loading', Loading)
+  .use(store).use(router)
+  .mount('#app');
 
 console.log(process.env);

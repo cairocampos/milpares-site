@@ -9,17 +9,18 @@
       <hr />
       <span>Chinelo Emborrachado</span>
     </div>
-    <main>
+    <Loading v-if="loading"/>
+    <main v-else-if="produto && Object.values(produto).length">
       <section class="products-display-section">
         <div class="pictures-options">
-          <img src="assets/images/chinelo.png" alt="Foto Chinelo" />
-          <img src="assets/images/chinelo.png" alt="Foto Chinelo" />
-          <img src="assets/images/chinelo.png" alt="Foto Chinelo" />
-          <img src="assets/images/chinelo.png" alt="Foto Chinelo" />
+          <img
+          v-for="imagem in produto.imagens"
+          :key="imagem.path"
+          :src="imagem.path" />
         </div>
 
         <div class="products-image-div">
-          <img src="assets/images/chinelo.png" alt="Foto Chinelo" />
+          <img :src="produto.imagem_principal?.path ?? '/assets/imges/default.png'"/>
         </div>
 
         <div class="slideshow-container">
@@ -55,15 +56,15 @@
 
         <div class="price-details">
           <div class="product-name-div">
-            <h2>Chinelo Emborrachado</h2>
-            <h6>Código: MII0001</h6>
+            <h2>{{produto.nome}}</h2>
+            <h6>Código: {{produto.codigo}}</h6>
           </div>
 
           <div class="price-info">
             <h6>Por Apenas:</h6>
             <h1>
               <span>R$</span>
-              <span>79,00</span>
+              <span>{{toBRL(produto.preco_promocional ?? produto.preco_custo)}}</span>
             </h1>
           </div>
 
@@ -71,11 +72,13 @@
             <h6>Cores</h6>
             <div class="circle-div colors">
               <form action="#">
-                <label>
-                  <input class="color-01" type="radio" name="options" />
-                </label>
-                <label>
-                  <input class="color-02" type="radio" name="options" />
+                <label
+                  v-for="cor in produto.cores"
+                  :key="cor.id">
+                  <input
+                    v-model="form.cor_id"
+                    :style="`background-color:${cor.hexadecimal}`"
+                    type="radio" :name="cor.nome" :value="cor.id"/>
                 </label>
               </form>
             </div>
@@ -84,31 +87,17 @@
           <div class="sizes-div">
             <h6>Tamanhos</h6>
             <div class="sizes">
-              <label>
-                <input type="radio" name="options" />
-                <span>35</span>
-              </label>
-              <label>
-                <input type="radio" name="options" />
-                <span>36</span>
-              </label>
-              <label>
-                <input type="radio" name="options" />
-                <span>37</span>
-              </label>
-              <label>
-                <input type="radio" name="options" />
-                <span>38</span>
-              </label>
-              <label>
-                <input type="radio" name="options" />
-                <span>39</span>
+              <label v-for="tamanho in tamanhos" :key="tamanho">
+                <input
+                  v-model="form.tamanho"
+                  type="radio" name="tamanho" :value="tamanho"/>
+                  <span>{{tamanho}}</span>
               </label>
             </div>
           </div>
 
           <div class="add-to-cart">
-            <button>Adicionar no carrinho</button>
+            <button @click="addCart">Adicionar no carrinho</button>
           </div>
         </div>
       </section>
@@ -124,7 +113,7 @@
         <div class="product-card-div">
           <div class="card">
             <div class="chinelo-div">
-              <img src="assets/images/chinelo.png" alt="" />
+              <img src="/assets/images/chinelo.png" alt="" />
             </div>
             <div>
               <h3>Chinelo Emborrachado</h3>
@@ -139,7 +128,7 @@
 
           <div class="card">
             <div class="chinelo-div">
-              <img src="assets/images/chinelo.png" alt="" />
+              <img src="/assets/images/chinelo.png" alt="" />
             </div>
             <div>
               <h3>Chinelo Emborrachado</h3>
@@ -154,7 +143,7 @@
 
           <div class="card">
             <div class="chinelo-div">
-              <img src="assets/images/chinelo.png" alt="" />
+              <img src="/assets/images/chinelo.png" alt="" />
             </div>
             <div>
               <h3>Chinelo Emborrachado</h3>
@@ -169,7 +158,7 @@
 
           <div class="card">
             <div class="chinelo-div">
-              <img src="assets/images/chinelo.png" alt="" />
+              <img src="/assets/images/chinelo.png" alt="" />
             </div>
             <div>
               <h3>Chinelo Emborrachado</h3>
@@ -184,7 +173,7 @@
 
           <div class="card">
             <div class="chinelo-div">
-              <img src="assets/images/chinelo.png" alt="" />
+              <img src="/assets/images/chinelo.png" alt="" />
             </div>
             <div>
               <h3>Chinelo Emborrachado</h3>
@@ -199,7 +188,7 @@
 
           <div class="card">
             <div class="chinelo-div">
-              <img src="assets/images/chinelo.png" alt="" />
+              <img src="/assets/images/chinelo.png" alt="" />
             </div>
             <div>
               <h3>Chinelo Emborrachado</h3>
@@ -214,8 +203,89 @@
         </div>
       </section>
     </main>
+    <h3 v-else>O produto não foi encontrado.</h3>
   </section>
 </template>
+
+<script lang="ts">
+import useAlert from '@/composables/useAlert';
+import useCurrency from '@/composables/useCurrency';
+import { IProdutoCatalogo } from '@/interfaces/IProduto';
+import { http } from '@/service';
+import {
+  computed, defineComponent, onMounted, ref,
+} from 'vue';
+
+export default defineComponent({
+  props: {
+    id: Number,
+  },
+  setup(props) {
+    const { alerts } = useAlert();
+    const loading = ref(false);
+    const form = ref({
+      cor_id: 0,
+      tamanho: 0,
+    });
+
+    const produto = ref<IProdutoCatalogo>();
+
+    const tamanhos = computed(() => {
+      let tamanhoItens: string[] = [];
+      if (produto.value && Object.keys(produto.value).length) {
+        tamanhoItens = produto.value?.grades?.map((item) => item.tamanho) ?? [];
+      }
+
+      return new Set([...tamanhoItens].sort());
+    });
+
+    const { toBRL } = useCurrency();
+
+    const fetchProduto = async () => {
+      try {
+        loading.value = true;
+        const { data } = await http.get(`/produtos/catalogo/${props.id}`);
+        produto.value = data;
+      } finally {
+        loading.value = false;
+      }
+    };
+
+    const validate = () => {
+      if (form.value.cor_id === 0) {
+        alerts.info('você precisa selecionar uma cor!');
+        return false;
+      }
+
+      if (form.value.tamanho === 0) {
+        alerts.info('você precisa selecionar um tamanho!');
+        return false;
+      }
+
+      return true;
+    };
+
+    const addCart = async () => {
+      if (validate()) {
+        console.log('opa');
+      }
+    };
+
+    onMounted(() => {
+      fetchProduto();
+    });
+
+    return {
+      form,
+      produto,
+      toBRL,
+      tamanhos,
+      loading,
+      addCart,
+    };
+  },
+});
+</script>
 
 <style scoped>
 /* ============ Top-Nav-Menu Start ============ */
@@ -291,6 +361,10 @@
 .sizes-div h6 {
   font-size: 1rem;
   margin-bottom: 1rem;
+}
+
+.sizes span {
+  margin-left:4px;
 }
 
 .product-name-div h6 {
@@ -382,19 +456,19 @@ label span {
   font-weight: 900;
 }
 
-.colors .color-01 {
-  background-color: #201a1e;
+.colors input {
+  /* background-color: #201a1e; */
   border-radius: 10em;
   margin-right: 5px;
   border: none;
 }
 
-.colors .color-02 {
+/* .colors .color-02 {
   background-color: #f0efeb;
   border-radius: 10em;
-}
+} */
 
-.colors .color-01:checked {
+.colors input:checked {
   outline: 3px groove #ef2765;
   background-color: #201a1e;
 }

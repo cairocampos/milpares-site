@@ -8,6 +8,8 @@ export interface IProdutoPrecificacao {
   percentual_revendedor: number;
   percentual_promocional: number;
   percentual_clube_desconto: number;
+
+  preco_promocional?:number;
 }
 
 export interface IProdutoImagem {
@@ -18,7 +20,7 @@ export interface IProdutoImagem {
 
 export interface IProdutoGrade {
   cor_id:number;
-  tamanho: number;
+  tamanho: string;
   quantidade:number;
 }
 
@@ -31,6 +33,27 @@ export interface IProdutoDados {
   fornecedor_id:number;
   imagens?: IProdutoImagem[],
   grades?: IProdutoGrade[]
+  imagem_principal?: {
+    path:string;
+  }
 }
 
-export interface IProduto extends IProdutoPrecificacao, IProdutoDados {}
+export interface IProdutoCatalogo extends IProdutoPrecificacao{
+  id?:number;
+  nome:string;
+  descricao:string;
+  categoria_id:number;
+  subcategoria_id:number;
+  fornecedor_id:number;
+  imagens?: IProdutoImagem[],
+  grades?: IProdutoGrade[]
+  imagem_principal?: {
+    path:string;
+  },
+  cores: {nome:string;hexadecimal:string;id?:number}[];
+  codigo?:string;
+}
+
+export interface IProduto extends IProdutoPrecificacao, IProdutoDados {
+  codigo?:string;
+}

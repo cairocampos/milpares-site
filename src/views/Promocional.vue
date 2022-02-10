@@ -24,7 +24,7 @@
         <div class="product-card-div" v-if="produtos && produtos.length">
           <router-link
             v-for="produto in produtos" class="card" :key="produto.id"
-            to="/produtos/1"
+            :to="{name: 'Produto', params: {id: produto.id}}"
             >
             <div class="chinelo-div">
               <img :src="produto.imagem_principal?.path ?? '/assets/images/default.png'" alt="" />
@@ -35,8 +35,10 @@
               <span>R$ {{toBRL(produto.preco_custo)}}</span>
             </div>
             <div class="circle-div">
-              <div></div>
-              <div></div>
+              <div
+                v-for="cor in produto.cores"
+                :key="cor.id"
+                :style="`background-color:${cor.hexadecimal}`"></div>
             </div>
           </router-link>
         </div>
@@ -83,6 +85,7 @@ export default defineComponent({
       const filtro = useSearchParams({
         filtros: {
           categoria: categoriaSelected.value,
+          promocional: 1,
         },
         page: paginate.value.current_page,
       });
@@ -391,14 +394,6 @@ export default defineComponent({
   min-width: 25px;
   min-height: 25px;
   border: 0.1px solid #d3d3d3;
-}
-
-.circle-div div:nth-of-type(1) {
-  background-color: #211c20;
-}
-
-.circle-div div:nth-of-type(2) {
-  background-color: #edece8;
 }
 /* ============ Catalogo End ============ */
 

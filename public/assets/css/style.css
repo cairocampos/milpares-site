@@ -369,3 +369,12 @@
 }
 
 /* ============ Header End ============ */
+
+
+.swal2-container > * {
+  font-family: 'Gotham-Light' !important;
+}
+
+.swal2-styled.swal2-confirm {
+  background-color: #e61655 !important;
+}
