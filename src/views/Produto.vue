@@ -64,7 +64,7 @@
             <h6>Por Apenas:</h6>
             <h1>
               <span>R$</span>
-              <span>{{toBRL(produto.preco_promocional ?? produto.preco_custo)}}</span>
+              <span>{{toBRL(produto.preco_promocional ?? produto.preco_loja)}}</span>
             </h1>
           </div>
 
