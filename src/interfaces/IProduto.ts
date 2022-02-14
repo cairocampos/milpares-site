@@ -8,8 +8,6 @@ export interface IProdutoPrecificacao {
   percentual_revendedor: number;
   percentual_promocional: number;
   percentual_clube_desconto: number;
-
-  preco_promocional?:number;
 }
 
 export interface IProdutoImagem {
@@ -52,6 +50,8 @@ export interface IProdutoCatalogo extends IProdutoPrecificacao{
   },
   cores: {nome:string;hexadecimal:string;id?:number}[];
   codigo?:string;
+  preco_loja:string;
+  preco_promocional:string;
 }
 
 export interface IProduto extends IProdutoPrecificacao, IProdutoDados {
