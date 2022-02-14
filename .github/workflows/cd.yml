@@ -16,7 +16,9 @@ jobs:
     - name: 📂 Sync files
       uses: SamKirkland/FTP-Deploy-Action@4.1.0
       with:
-        server: ftp.x7digital.com.br
-        username: u395692005.milpares.com.br
+        port: ${{ secrets.SSH_PORT }}
+        server: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: dist/
+        # server-dir: painel/
