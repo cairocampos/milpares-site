@@ -212,15 +212,18 @@ import useAlert from '@/composables/useAlert';
 import useCurrency from '@/composables/useCurrency';
 import { IProdutoCatalogo } from '@/interfaces/IProduto';
 import { http } from '@/service';
+import store from '@/store';
 import {
   computed, defineComponent, onMounted, ref,
 } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   props: {
     id: Number,
   },
   setup(props) {
+    const router = useRouter();
     const { alerts } = useAlert();
     const loading = ref(false);
     const form = ref({
@@ -267,7 +270,13 @@ export default defineComponent({
 
     const addCart = async () => {
       if (validate()) {
-        console.log('opa');
+        store.commit('UPDATE_CARRINHO', {
+          id: produto.value?.id,
+          cor_id: form.value.cor_id,
+          tamanho: form.value.tamanho,
+        });
+
+        router.push('/carrinho');
       }
     };
 
