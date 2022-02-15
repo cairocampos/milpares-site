@@ -1,21 +1,16 @@
+import { ICarrinho } from '@/interfaces/ICarrinho';
 import { createStore } from 'vuex';
-
-interface ItemCart {
-  id: number;
-  quantidade:number;
-  tamanho:string;
-}
 
 export default createStore({
   state: {
-    carrinho: [] as ItemCart[],
+    carrinho: [] as ICarrinho[],
   },
   mutations: {
-    UPDATE_CARRINHO(state, payload: ItemCart) {
+    UPDATE_CARRINHO(state, payload: ICarrinho) {
       // state.carrinho = payload;
       const storage = localStorage.getItem('cart');
       if (storage) {
-        const data: ItemCart[] = JSON.parse(storage);
+        const data: ICarrinho[] = JSON.parse(storage);
         data.push(payload);
         state.carrinho = data;
         localStorage.setItem('cart', JSON.stringify(data));
