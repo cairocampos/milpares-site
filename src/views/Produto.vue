@@ -20,7 +20,7 @@
         </div>
 
         <div class="products-image-div">
-          <img :src="produto.imagem_principal?.path ?? '/assets/imges/default.png'"/>
+          <img :src="produto.imagem_principal?.path ?? '/assets/images/default.png'"/>
         </div>
 
         <div class="slideshow-container">
@@ -331,9 +331,8 @@ export default defineComponent({
 
 .pictures-options {
   gap: 1.5rem;
-  display: flex;
-  flex-wrap: wrap;
-  max-width: 95px;
+  display: grid;
+  max-width: 100px;
 }
 
 .pictures-options img {
@@ -343,8 +342,9 @@ export default defineComponent({
 }
 
 .products-image-div {
-  width: 100%;
-  max-width: 500px;
+  flex-grow: 1;
+  max-width: 540px;
+  height: 540px;
 }
 
 .products-image-div img {
@@ -352,6 +352,8 @@ export default defineComponent({
   width: 100%;
 
   max-height: 520px;
+  object-fit: cover;
+  border: 1px solid;
 }
 
 .price-details {

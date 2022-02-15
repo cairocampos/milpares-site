@@ -48,7 +48,7 @@ export interface IProdutoCatalogo extends IProdutoPrecificacao{
   imagem_principal?: {
     path:string;
   },
-  cores: {nome:string;hexadecimal:string;id?:number}[];
+  cores: {nome:string;hexadecimal:string;id:number}[];
   codigo?:string;
   preco_loja:string;
   preco_promocional:string;

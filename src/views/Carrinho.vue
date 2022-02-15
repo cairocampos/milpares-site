@@ -10,43 +10,46 @@
       <span>Chinelo Emborrachado</span>
     </div>
     <main>
-      <section class="carrinho-details-section">
-        <div class="carrinho-details">
-          <div class="products-carrinho">
-            <div class="image">
-              <img src="assets/images/chinelo.png" alt="Chinelo Exemplo" />
-            </div>
+      <Loading v-if="loading" />
+      <section v-else-if="carrinho && carrinho.length" class="carrinho-details-section">
+        <div class="carrinho-container">
+          <div v-for="(item, index) in carrinho" class="carrinho-details" :key="index">
+            <div class="products-carrinho">
+              <div class="image">
+                <img src="assets/images/chinelo.png" alt="Chinelo Exemplo" />
+              </div>
 
-            <div class="text-carrinho">
-              <h1>Chinelo Emborrachado</h1>
-              <p><b>Código:</b> MII0001</p>
-              <p><b>Tamanho:</b> 35</p>
-              <p><b>Cores:</b> Preto</p>
-            </div>
+              <div class="text-carrinho">
+                <h1>{{ getProduto(item.id)?.nome }}</h1>
+                <p><b>Código:</b> {{getProduto(item.id)?.codigo}}</p>
+                <p><b>Tamanho:</b> {{item.tamanho}}</p>
+                <p><b>Cor:</b> {{getNomeCor(item.id, item.cor_id)}}</p>
+              </div>
 
-            <div class="trash-icon-div">
-              <button>
-                <i class="icofont-trash"></i>
-              </button>
-            </div>
-          </div>
-
-          <hr />
-
-          <div class="amount-price-main">
-            <div class="amount-div">
-              <p>
-                <b>Quantidade:</b>
-              </p>
-              <div class="container">
-                <input type="button" onclick="decrementValue()" value="-" />
-                <input type="text" name="quantity" value="1" id="number"/>
-                <input type="button" onclick="incrementValue()" value="+" />
+              <div class="trash-icon-div">
+                <button @click="removeItemCarrinho(item)">
+                  <i class="icofont-trash"></i>
+                </button>
               </div>
             </div>
-            <div class="price-div">
-              <span>R$</span>
-              <span>79,00</span>
+
+            <hr />
+
+            <div class="amount-price-main">
+              <div class="amount-div">
+                <p>
+                  <b>Quantidade:</b>
+                </p>
+                <div class="container">
+                  <input type="button" onclick="decrementValue()" value="-" />
+                  <input type="text" name="quantity" value="1" id="number"/>
+                  <input type="button" onclick="incrementValue()" value="+" />
+                </div>
+              </div>
+              <div class="price-div">
+                <span>R$</span>
+                <span>{{getProdutoPreco(item.id)}}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -68,6 +71,90 @@
     </main>
   </section>
 </template>
+
+<script lang="ts">
+import { IProdutoCatalogo } from '@/interfaces/IProduto';
+import {
+  computed, defineComponent, onMounted, ref, watch,
+} from 'vue';
+import { useStore } from 'vuex';
+import { ICarrinho } from '@/interfaces/ICarrinho';
+import { http } from '@/service';
+import useCurrency from '@/composables/useCurrency';
+import useAlert from '@/composables/useAlert';
+
+export default defineComponent({
+  setup() {
+    const { alerts } = useAlert();
+    const loading = ref(false);
+    const store = useStore();
+    const carrinho = ref<ICarrinho[]>(store.getters.getCarrinho ?? []);
+
+    const produtos = ref<IProdutoCatalogo[]>();
+
+    const fetchProdutos = async () => {
+      try {
+        loading.value = true;
+        const items = carrinho.value.map((item) => item.id);
+        const { data } = await http.get<IProdutoCatalogo[]>('/produtos/catalogo/items', {
+          params: {
+            produto_ids: [...new Set(items)],
+          },
+        });
+
+        produtos.value = data;
+      } catch (error) {
+        console.log(error);
+      } finally {
+        loading.value = false;
+      }
+    };
+    watch(carrinho, () => fetchProdutos());
+
+    const getProduto = (produtoId:number) => {
+      const produto = produtos.value?.find((item) => item.id === produtoId);
+      return produto ?? null;
+    };
+
+    const getProdutoPreco = (produtoId:number) => {
+      const { toBRL } = useCurrency();
+      const produto = produtos.value?.find((item) => item.id === produtoId);
+      return produto ? toBRL(produto.preco_promocional ?? produto.preco_loja) : null;
+    };
+
+    const getNomeCor = (produtoId:number, corId:number) => {
+      const produto = produtos.value?.find((item) => item.id === produtoId);
+      if (produto) {
+        return produto.cores.find((item) => item.id === corId)?.nome;
+      }
+
+      return '';
+    };
+
+    const removeItemCarrinho = async (item: ICarrinho) => {
+      alerts.confirm('Deseja remover esse item do carrinho?')
+        .then((result) => {
+          if (result.isConfirmed) {
+            //
+          }
+        });
+    };
+
+    onMounted(() => {
+      fetchProdutos();
+    });
+
+    return {
+      loading,
+      carrinho,
+      getProduto,
+      getProdutoPreco,
+      getNomeCor,
+      removeItemCarrinho,
+    };
+  },
+});
+</script>
 
 <style scoped>
 .header {
@@ -112,9 +199,17 @@
   }
 }
 
+.carrinho-container {
+  display:flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
 .carrinho-details {
   flex-grow: 1;
   max-width: 100%;
+  flex-grow: 1;
+  margin-bottom: 32px;
 }
 
 .trash-icon-div {
