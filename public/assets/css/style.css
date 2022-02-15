@@ -1,6 +1,6 @@
 /* ============ Font-Face Start Start ============ */
 
-/* @font-face {
+@font-face {
   font-family: "Gotham-Black";
   src: url("../fonts/GothamBlack.otf");
 }
@@ -51,7 +51,7 @@
 @font-face {
   font-family: "Gotham-XLight-Italic";
   src: url("../fonts/Gotham-XLightItalic.otf");
-} */
+}
 
 
 /* @font-face {
