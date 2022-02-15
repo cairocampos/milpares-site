@@ -7,18 +7,16 @@ jobs:
     steps:
     - name: 🚚 Get latest code
       uses: actions/checkout@v2
-      with: node-version: '14'
 
     - name: 🔨 Build Project
       run: |
-        yarn
-        yarn build
+        npm install
+        npm run build
     
     - name: 📂 Sync files
       uses: SamKirkland/FTP-Deploy-Action@4.1.0
       with:
-        server: 151.106.99.4
+        server: ftp.milpares.com.br
         username: u395692005.milpares.com.br
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: dist/
-        # server-dir: painel/
