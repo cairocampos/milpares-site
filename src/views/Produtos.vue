@@ -1,5 +1,30 @@
 <template>
   <section>
+    <transition
+      name="sidebar"
+      mode="out-in"
+    >
+      <AppSidebar
+        v-if="showFilters"
+        v-model:show="showFilters"
+      >
+        <div class="side-categories">
+          <hr />
+          <h3>Subcategorias</h3>
+          <hr />
+          <ul class="categorias">
+            <li
+              v-for="subcategoria in subcategorias"
+              :key="subcategoria.nome"
+              :class="[subcategoria.nome === route.query?.subcategoria ? 'active' : '']"
+              @click="subcategoriaSelected = subcategoria.nome; showFilters = false"
+            >
+              {{ subcategoria.nome }}
+            </li>
+          </ul>
+        </div>
+      </AppSidebar>
+    </transition>
     <main class="main-content">
       <div class="side-categories">
         <hr />
@@ -20,9 +45,9 @@
       <div class="catalogo-div">
         <i
           class="icofont-filter filter-icon"
-          onclick="openFilterMenu()"
+          @click="showFilters = true"
         >
-          <span>Filtros</span>
+          <span> Filtros</span>
         </i>
         <div
           v-if="produtos && produtos.length"
@@ -32,7 +57,7 @@
             v-for="produto in produtos"
             :key="produto.id"
             class="card"
-            :to="{name: 'Produto', params: {id: produto.id}}"
+            :to="{name: 'produto', params: {id: produto.id}}"
           >
             <div class="chinelo-div">
               <img
@@ -46,8 +71,11 @@
               <span>R$ {{ toBRL(produto.preco_loja) }}</span>
             </div>
             <div class="circle-div">
-              <div></div>
-              <div></div>
+              <div
+                v-for="cor in produto.cores"
+                :key="cor.id"
+                :style="`background-color:${cor.hexadecimal}`"
+              ></div>
             </div>
           </router-link>
         </div>
@@ -80,27 +108,40 @@ import { IProdutoCatalogo } from '@/interfaces/IProduto';
 import useSearchParams from '@/composables/useSearchParams';
 import { IPaginate } from '@/interfaces/IPaginate';
 import usePaginate from '@/composables/usePaginate';
+import AppSidebar from '@/components/AppSidebar.vue';
 
 export default defineComponent({
+  components: {
+    AppSidebar
+  },
   setup() {
     const { paginate, podePaginar } = usePaginate();
 
     const { toBRL } = useCurrency();
     const categoriaSelected = ref('');
+    const subcategoriaSelected = ref('');
     const categorias = ref<ICategoria[]>([]);
+    const subcategorias = ref<ICategoria[]>([]);
     const produtos = ref<IProdutoCatalogo[]>([]);
     const route = useRoute();
     const router = useRouter();
+    const showFilters = ref(false)
 
     const fetchCategorias = async () => {
       const { data } = await http.get<ICategoria[]>('/categorias-produtos');
       categorias.value = data;
     };
 
+    const fetchSubcategorias = async () => {
+      const { data } = await http.get<ICategoria[]>('/subcategorias-produtos');
+      subcategorias.value = data;
+    };
+
     const fetchProdutos = async () => {
       const filtro = useSearchParams({
         filtros: {
           categoria: categoriaSelected.value,
+          subcategoria: subcategoriaSelected.value,
         },
         page: paginate.value.current_page,
       });
@@ -120,6 +161,12 @@ export default defineComponent({
       resetProdutos();
     });
 
+    watch(subcategoriaSelected, (val) => {
+      const { query } = route;
+      router.push({ query: { ...query, subcategoria: val } });
+      resetProdutos();
+    });
+
     watch(() => paginate.value.current_page, () => {
       fetchProdutos();
     });
@@ -128,17 +175,21 @@ export default defineComponent({
       const categoriaQuery = route.query?.categoria;
       categoriaSelected.value = String(categoriaQuery ?? '');
       fetchCategorias();
+      fetchSubcategorias();
       fetchProdutos();
     });
 
     return {
       categoriaSelected,
+      subcategoriaSelected,      
       categorias,
+      subcategorias,
       route,
       toBRL,
       produtos,
       paginate,
       podePaginar,
+      showFilters
     };
   },
 });
@@ -514,5 +565,27 @@ export default defineComponent({
   .filter-icon span {
     font-size: 0.8rem;
   }
+} 
+
+.sidebar-enter-active {
+  transition: all .3s
 }
+
+.sidebar-leave-active {
+  transition: all .5s
+}
+
+.sidebar-enter-from,
+.sidebar-leave-to {
+  opacity: 0;
+}
+
+.sidebar-enter-from {
+  transform: translateX(100px);
+}
+
+.sidebar-leave-to {
+  width: 0;
+}
+
 </style>

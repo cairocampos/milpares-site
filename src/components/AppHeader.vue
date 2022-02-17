@@ -70,7 +70,7 @@ export default defineComponent({
     const PAINEL_MILPARES = process.env.VUE_APP_PAINEL;
 
     const carrinhoTotal = computed(() => {
-      return store.getters['getCarrinho'].length
+      return store.getters.getCarrinho.length
     })
     return {
       PAINEL_MILPARES,

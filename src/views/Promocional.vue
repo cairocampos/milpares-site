@@ -9,45 +9,64 @@
           <li
             v-for="categoria in categorias"
             :key="categoria.nome"
-            @click="categoriaSelected = categoria.nome"
             :class="[categoria.nome === route.query?.categoria ? 'active' : '']"
-            >
-            {{categoria.nome}}
+            @click="categoriaSelected = categoria.nome"
+          >
+            {{ categoria.nome }}
           </li>
         </ul>
       </div>
 
       <div class="catalogo-div">
-        <i class="icofont-filter filter-icon" onclick="openFilterMenu()">
+        <i
+          class="icofont-filter filter-icon"
+          onclick="openFilterMenu()"
+        >
           <span>Filtros</span>
         </i>
-        <div class="product-card-div" v-if="produtos && produtos.length">
+        <div
+          v-if="produtos && produtos.length"
+          class="product-card-div"
+        >
           <router-link
-            v-for="produto in produtos" class="card" :key="produto.id"
-            :to="{name: 'Produto', params: {id: produto.id}}"
-            >
+            v-for="produto in produtos"
+            :key="produto.id"
+            class="card"
+            :to="{name: 'produto', params: {id: produto.id}}"
+          >
             <div class="chinelo-div">
-              <img :src="produto.imagem_principal?.path ?? '/assets/images/default.png'" alt="" />
+              <img
+                :src="produto.imagem_principal?.path ?? '/assets/images/default.png'"
+                alt=""
+              />
             </div>
             <div>
-              <h3>{{produto.nome}}</h3>
+              <h3>{{ produto.nome }}</h3>
               <span>Por Apenas: </span>
-              <span>R$ {{toBRL(produto.preco_promocional)}}</span>
+              <span>R$ {{ toBRL(produto.preco_promocional) }}</span>
             </div>
             <div class="circle-div">
               <div
                 v-for="cor in produto.cores"
                 :key="cor.id"
-                :style="`background-color:${cor.hexadecimal}`"></div>
+                :style="`background-color:${cor.hexadecimal}`"
+              ></div>
             </div>
           </router-link>
         </div>
-        <p v-else>Nenhum item encontrado.</p>
+        <p v-else>
+          Nenhum item encontrado.
+        </p>
       </div>
     </main>
 
-    <div class="see-more-button-div" v-if="podePaginar">
-      <button @click="paginate.current_page++">Ver mais produtos</button>
+    <div
+      v-if="podePaginar"
+      class="see-more-button-div"
+    >
+      <button @click="paginate.current_page++">
+        Ver mais produtos
+      </button>
     </div>
   </section>
 </template>

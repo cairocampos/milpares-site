@@ -1,16 +1,10 @@
 <template>
   <section>
-    <div class="top-nav-info">
-      <span>Home</span>
-      <hr />
-      <span>Produtos</span>
-      <hr />
-      <span>Chinelos</span>
-      <hr />
-      <span>Chinelo Emborrachado</span>
-    </div>
     <Loading v-if="loading" />
     <main v-else-if="produto && Object.values(produto).length">
+      <div class="top-nav-info">
+        <Breadcrumbs :product="produto.nome" />
+      </div>
       <section class="products-display-section">
         <div class="pictures-options">
           <img
@@ -24,59 +18,6 @@
         <div class="products-image-div">
           <img :src="imagemPrincipal" />
         </div>
-
-        <!-- <div class="slideshow-container">
-          <div class="mySlides fade">
-            <div class="numbertext">
-              1 / 3
-            </div>
-            <img
-              src="https://media.istockphoto.com/photos/pair-of-beige-female-shoes-on-white-background-picture-id585765638?k=20&m=585765638&s=612x612&w=0&h=1Du8LB3QTb_WLDrkAe3HRa1MkjhrxXrrpH4YaZ4EXCU="
-            />
-          </div>
-          <div class="mySlides fade">
-            <div class="numbertext">
-              2 / 3
-            </div>
-            <img
-              src="https://media.istockphoto.com/photos/shoes-picture-id475661038?s=612x612"
-            />
-          </div>
-          <div class="mySlides fade">
-            <div class="numbertext">
-              3 / 3
-            </div>
-            <img
-              src="https://png.pngtree.com/png-clipart/20200701/original/pngtree-girls-shoes-design-png-image_5363520.jpg"
-            />
-          </div>
-          <a
-            class="prev"
-            onclick="plusSlides(-1)"
-          >&#10094;</a>
-          <a
-            class="next"
-            onclick="plusSlides(1)"
-          >&#10095;</a>
-
-          <div
-            style="text-align: center"
-            class="dots"
-          >
-            <span
-              class="dot"
-              onclick="currentSlide(1)"
-            ></span>
-            <span
-              class="dot"
-              onclick="currentSlide(2)"
-            ></span>
-            <span
-              class="dot"
-              onclick="currentSlide(3)"
-            ></span>
-          </div>
-        </div> -->
         
         <div class="slideshow-container">
           <Carousel
@@ -114,7 +55,7 @@
             <h6>Por Apenas:</h6>
             <h1>
               <span>R$</span>
-              <span>{{ toBRL(produto.preco_promocional ?? produto.preco_loja) }}</span>
+              <span>{{ toBRL(produto.preco_promocional > '0' ? produto.preco_promocional : produto.preco_loja) }}</span>
             </h1>
           </div>
 
@@ -169,119 +110,9 @@
         <p>{{ produto.descricao }}</p>
         <hr />
       </section>
-
-      <section class="product-card-div-section">
-        <h1>Você também pode gostar</h1>
-        <div class="product-card-div">
-          <div class="card">
-            <div class="chinelo-div">
-              <img
-                src="/assets/images/chinelo.png"
-                alt=""
-              />
-            </div>
-            <div>
-              <h3>Chinelo Emborrachado</h3>
-              <span>Por Apenas:</span>
-              <span>R$ 79,00</span>
-            </div>
-            <div class="circle-div">
-              <div></div>
-              <div></div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="chinelo-div">
-              <img
-                src="/assets/images/chinelo.png"
-                alt=""
-              />
-            </div>
-            <div>
-              <h3>Chinelo Emborrachado</h3>
-              <span>Por Apenas:</span>
-              <span>R$ 79,00</span>
-            </div>
-            <div class="circle-div">
-              <div></div>
-              <div></div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="chinelo-div">
-              <img
-                src="/assets/images/chinelo.png"
-                alt=""
-              />
-            </div>
-            <div>
-              <h3>Chinelo Emborrachado</h3>
-              <span>Por Apenas:</span>
-              <span>R$ 79,00</span>
-            </div>
-            <div class="circle-div">
-              <div></div>
-              <div></div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="chinelo-div">
-              <img
-                src="/assets/images/chinelo.png"
-                alt=""
-              />
-            </div>
-            <div>
-              <h3>Chinelo Emborrachado</h3>
-              <span>Por Apenas:</span>
-              <span>R$ 79,00</span>
-            </div>
-            <div class="circle-div">
-              <div></div>
-              <div></div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="chinelo-div">
-              <img
-                src="/assets/images/chinelo.png"
-                alt=""
-              />
-            </div>
-            <div>
-              <h3>Chinelo Emborrachado</h3>
-              <span>Por Apenas:</span>
-              <span>R$ 79,00</span>
-            </div>
-            <div class="circle-div colors">
-              <div></div>
-              <div></div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="chinelo-div">
-              <img
-                src="/assets/images/chinelo.png"
-                alt=""
-              />
-            </div>
-            <div>
-              <h3>Chinelo Emborrachado</h3>
-              <span>Por Apenas:</span>
-              <span>R$ 79,00</span>
-            </div>
-            <div class="circle-div">
-              <div></div>
-              <div></div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <ProdutosRelacionados
+        :id="id"
+      />
     </main>
     <h3 v-else>
       O produto não foi encontrado.
@@ -300,9 +131,12 @@ import {
 } from 'vue';
 import { useRouter } from 'vue-router';
 
+import Breadcrumbs from '@/components/Breadcrumbs.vue';
+
 // carousel
 import 'vue3-carousel/dist/carousel.css';
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel';
+import ProdutosRelacionados from '../components/ProdutosRelacionados.vue';
 
 export default defineComponent({
   components: {
@@ -310,7 +144,9 @@ export default defineComponent({
     Slide,
     Pagination,
     Navigation,
-  },
+    Breadcrumbs,
+    ProdutosRelacionados
+},
   props: {
     id: Number,
   },

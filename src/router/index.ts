@@ -13,23 +13,23 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/produtos',
-    name: 'Produtos',
+    name: 'produtos',
     component: Produtos,
   },
   {
     path: '/produtos/promocao',
-    name: 'Promocional',
+    name: 'promocional',
     component: Promocional,
   },
   {
     path: '/produtos/:id/detalhes',
-    name: 'Produto',
+    name: 'produto',
     props: true,
     component: Produto,
   },
   {
     path: '/carrinho',
-    name: 'Carrinho',
+    name: 'parrinho',
     component: Carrinho,
   },
 ];

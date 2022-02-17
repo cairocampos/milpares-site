@@ -1,13 +1,7 @@
 <template>
   <section>
     <div class="top-nav-info">
-      <span>Home</span>
-      <hr />
-      <span>Produtos</span>
-      <hr />
-      <span>Chinelos</span>
-      <hr />
-      <span>Chinelo Emborrachado</span>
+      <Breadcrumbs />
     </div>
     <main>
       <Loading v-if="loading" />
@@ -80,7 +74,7 @@
 
         <div class="form-div">
           <form
-            @submit.prevent="sendForm"
+            @submit.prevent="checkForm"
           >
             <input
               v-model="form.nome"
@@ -108,14 +102,23 @@
             <button type="submit">
               Compre via Whatsapp
             </button>
+            <button
+              type="button"
+              style="background-color: red;"
+              @click="clear"
+            >
+              Limpar Carrinho
+            </button>
           </form>
         </div>
       </section>
+      <CarrinhoVazio />
     </main>
   </section>
 </template>
 
 <script lang="ts">
+import CarrinhoVazio from '@/components/carrinho/CarrinhoVazio.vue';
 import { IProdutoCatalogo } from '@/interfaces/IProduto';
 import {
   defineComponent, onMounted, ref, watch,
@@ -126,9 +129,9 @@ import { http } from '@/service';
 import useCurrency from '@/composables/useCurrency';
 import useAlert from '@/composables/useAlert';
 import Loading from '../components/global/Loading.vue';
-
+import Breadcrumbs from '../components/Breadcrumbs.vue'
 export default defineComponent({
-    components: { Loading },
+    components: { Loading, CarrinhoVazio, Breadcrumbs },
     setup() {
         const form = ref({
             nome: "",
@@ -139,7 +142,9 @@ export default defineComponent({
         const { alerts } = useAlert();
         const loading = ref(false);
         const store = useStore();
-        const carrinho = ref<ICarrinho[]>(store.getters.getCarrinho ?? []);
+        const carrinho = ref<ICarrinho[]>([]);
+
+
         const produtos = ref<IProdutoCatalogo[]>();
         const fetchProdutos = async () => {
             try {
@@ -167,7 +172,7 @@ export default defineComponent({
         const getProdutoPreco = (produtoId: number, quantidade: number) => {
             const { toBRL } = useCurrency();
             const produto = produtos.value?.find((item) => item.id === produtoId);
-            const preco = produto?.preco_promocional ?? produto?.preco_loja ?? 0;
+            const preco = produto?.preco_promocional != '0.00' ? produto?.preco_promocional : produto?.preco_loja != '0.00' ? produto.preco_loja : 0;
             const total = Number(preco) * quantidade;
             return produto ? toBRL(total) : null;
         };
@@ -209,14 +214,15 @@ export default defineComponent({
                 store.dispatch("updateItemCarrinho", carrinho.value[index]);
             }, 1000);
         };
+
         const sendForm = async () => {
             try {
                 alerts.showLoading('Processando seu pedido...');
-                const {data} = await http.post('/produtos/catalogo/pedido', {
+                const {data} = await http.post<{link:string}>('/produtos/catalogo/pedido', {
                   ...form.value,
                   items: carrinho.value
                 })
-                console.log(data);
+                window.open(data.link, '_blank')
             }
             catch (error) {
                 alerts.error("Algo inesperado aconteceu");
@@ -226,10 +232,34 @@ export default defineComponent({
               alerts.hideLoading();
             }
         };
+
+        const checkForm = async () => {
+          const { nome, email, telefone } = form.value
+          if(!nome) return alerts.info('Favor informar um nome.');
+          if(!email) return alerts.info('Informe um email.');
+          if(!telefone) return alerts.info('Informe um telefone.');
+
+          sendForm();
+        }
+
+        const clear = () => {
+          store.dispatch('limparCarrinho');
+          carrinho.value = [];
+          form.value = {
+            email: "",
+            extra:"",
+            nome: "",
+            telefone:""
+          }
+        }
+
         onMounted(() => {
+            store.dispatch('verificarCarrinho')
+            carrinho.value = store.getters.getCarrinho
             fetchProdutos();
         });
         return {
+            clear,
             loading,
             carrinho,
             getProduto,
@@ -240,7 +270,7 @@ export default defineComponent({
             incrementValue,
             decrementValue,
             form,
-            sendForm
+            checkForm
         };
     }
 });
@@ -616,5 +646,11 @@ hr {
   .price-div span:nth-child(2) {
     font-size: 0.9rem;
   }
+}
+
+span.text-error {
+  color: #e61655;
+  font-size: 12px;
+  display: block;
 }
 </style>

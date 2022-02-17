@@ -3,9 +3,13 @@ import { createStore } from 'vuex';
 
 export default createStore({
   state: {
+    backdrop:false,
     carrinho: [] as ICarrinho[],
   },
   mutations: {
+    UPDATE_BACKDROP(state,payload:boolean) {
+      state.backdrop = payload
+    },
     SET_CARRINHO(state, payload: ICarrinho[]) {
       state.carrinho = payload
     },
@@ -30,8 +34,14 @@ export default createStore({
     },
   },
   actions: {
-    verificaItensNoCarrinho() {
-      //
+    verificarCarrinho({commit, getters}) {
+      const carrinho = getters.getCarrinhoStorage;
+      console.log(carrinho)
+      commit('SET_CARRINHO', carrinho);
+    },
+    limparCarrinho({commit}) {
+      localStorage.removeItem('cart');
+      commit('SET_CARRINHO', []);
     },
     async removeItemCarrinho({getters,commit}, data: ICarrinho)  {
       const items: ICarrinho[] = await getters['getCarrinhoStorage'];
@@ -56,21 +66,19 @@ export default createStore({
         localStorage.setItem('cart', JSON.stringify(items));
         commit('SET_CARRINHO', items);
       }
+    },
+    showBackdrop({commit}) {
+      commit('UPDATE_BACKDROP', true)
+    },
+    hideBackdrop({commit}) {
+      commit('UPDATE_BACKDROP', false)
     }
   },
   modules: {
   },
   getters: {
     getCarrinho({ carrinho }) {
-      if (carrinho.length) { return carrinho; }
-
-      const storage = localStorage.getItem('cart');
-      if (storage) {
-        const data = JSON.parse(storage);
-        return data;
-      }
-
-      return [];
+      return carrinho;
     },
     getCarrinhoStorage() {
       try {
