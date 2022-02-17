@@ -192,7 +192,7 @@ export default defineComponent({
         };
         const getImageProduto = (produtoId: number) => {
             const produto = getProduto(produtoId);
-            return produto?.imagem_principal ?? "/assets/images/default.png";
+            return produto?.imagem_principal?.path ?? "/assets/images/default.png";
         };
         let interval = setTimeout(() => null, 1000);
         const incrementValue = (index: number) => {

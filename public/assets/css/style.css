@@ -78,7 +78,7 @@
 .header {
   display: flex;
   justify-content: space-between;
-  padding: 5rem;
+  padding: 3rem 5rem;
   font-family: Gotham-Book;
   white-space: nowrap;
 }
@@ -92,9 +92,9 @@
 }
 
 .cart-content-count {
-  display: 
-  
-  id;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   place-items: center;
   background-color: #ef2866;
   color: #eeeeee;

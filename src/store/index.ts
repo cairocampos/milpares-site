@@ -6,6 +6,9 @@ export default createStore({
     carrinho: [] as ICarrinho[],
   },
   mutations: {
+    SET_CARRINHO(state, payload: ICarrinho[]) {
+      state.carrinho = payload
+    },
     UPDATE_CARRINHO(state, payload: ICarrinho) {
       // state.carrinho = payload;
       const storage = localStorage.getItem('cart');
@@ -30,7 +33,7 @@ export default createStore({
     verificaItensNoCarrinho() {
       //
     },
-    async removeItemCarrinho({getters}, data: ICarrinho)  {
+    async removeItemCarrinho({getters,commit}, data: ICarrinho)  {
       const items: ICarrinho[] = await getters['getCarrinhoStorage'];
       const findIndex = items.findIndex(item => (
         item.id == data.id && item.tamanho == data.tamanho && item.cor_id == data.cor_id
@@ -39,9 +42,10 @@ export default createStore({
       if(findIndex !== -1) {
         items.splice(findIndex, 1);
         localStorage.setItem('cart', JSON.stringify(items));
+        commit('SET_CARRINHO', items);
       }
     },
-    async updateItemCarrinho({getters},data: ICarrinho) {
+    async updateItemCarrinho({getters, commit},data: ICarrinho) {
       const items: ICarrinho[] = await getters['getCarrinhoStorage'];
       const findIndex = items.findIndex(item => (
         item.id == data.id && item.tamanho == data.tamanho && item.cor_id == data.cor_id
@@ -50,6 +54,7 @@ export default createStore({
       if(findIndex !== -1) {
         items[findIndex] = data;
         localStorage.setItem('cart', JSON.stringify(items));
+        commit('SET_CARRINHO', items);
       }
     }
   },
