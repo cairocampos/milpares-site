@@ -112,7 +112,7 @@
           </form>
         </div>
       </section>
-      <CarrinhoVazio />
+      <CarrinhoVazio v-else />
     </main>
   </section>
 </template>
