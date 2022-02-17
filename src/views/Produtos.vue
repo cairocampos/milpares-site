@@ -89,7 +89,11 @@
       v-if="podePaginar"
       class="see-more-button-div"
     >
-      <button @click="paginate.current_page++">
+      <Loading v-if="loading" />
+      <button
+        v-else
+        @click="paginate.current_page++"
+      >
         Ver mais produtos
       </button>
     </div>
@@ -137,7 +141,10 @@ export default defineComponent({
       subcategorias.value = data;
     };
 
+    const loading = ref(false);
+
     const fetchProdutos = async () => {
+      loading.value = true;
       const filtro = useSearchParams({
         filtros: {
           categoria: categoriaSelected.value,
@@ -148,6 +155,7 @@ export default defineComponent({
       const { data } = await http.get<{data: IProdutoCatalogo[], meta: IPaginate}>(`/produtos/catalogo?${filtro}`);
       produtos.value = data.data;
       paginate.value = data?.meta;
+      loading.value = false;
     };
 
     const resetProdutos = () => {
@@ -180,6 +188,7 @@ export default defineComponent({
     });
 
     return {
+      loading,
       categoriaSelected,
       subcategoriaSelected,      
       categorias,
