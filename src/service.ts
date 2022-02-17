@@ -1,5 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-/* eslint-disable no-param-reassign */
 import axios, { AxiosError, AxiosInstance } from 'axios';
 import store from '@/store';
 

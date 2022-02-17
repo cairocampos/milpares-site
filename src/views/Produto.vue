@@ -9,62 +9,112 @@
       <hr />
       <span>Chinelo Emborrachado</span>
     </div>
-    <Loading v-if="loading"/>
+    <Loading v-if="loading" />
     <main v-else-if="produto && Object.values(produto).length">
       <section class="products-display-section">
         <div class="pictures-options">
           <img
-          v-for="imagem in produto.imagens"
-          :key="imagem.path"
-          :src="imagem.path" />
+            v-for="imagem in produto.imagens"
+            :key="imagem.path"
+            :src="imagem.path"
+            @click="imagemPrincipal = imagem.path"
+          />
         </div>
 
         <div class="products-image-div">
-          <img :src="produto.imagem_principal?.path ?? '/assets/images/default.png'"/>
+          <img :src="imagemPrincipal" />
         </div>
 
-        <div class="slideshow-container">
+        <!-- <div class="slideshow-container">
           <div class="mySlides fade">
-            <div class="numbertext">1 / 3</div>
+            <div class="numbertext">
+              1 / 3
+            </div>
             <img
               src="https://media.istockphoto.com/photos/pair-of-beige-female-shoes-on-white-background-picture-id585765638?k=20&m=585765638&s=612x612&w=0&h=1Du8LB3QTb_WLDrkAe3HRa1MkjhrxXrrpH4YaZ4EXCU="
             />
           </div>
           <div class="mySlides fade">
-            <div class="numbertext">2 / 3</div>
+            <div class="numbertext">
+              2 / 3
+            </div>
             <img
               src="https://media.istockphoto.com/photos/shoes-picture-id475661038?s=612x612"
             />
           </div>
           <div class="mySlides fade">
-            <div class="numbertext">3 / 3</div>
+            <div class="numbertext">
+              3 / 3
+            </div>
             <img
               src="https://png.pngtree.com/png-clipart/20200701/original/pngtree-girls-shoes-design-png-image_5363520.jpg"
             />
           </div>
-          <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-          <a class="next" onclick="plusSlides(1)">&#10095;</a>
+          <a
+            class="prev"
+            onclick="plusSlides(-1)"
+          >&#10094;</a>
+          <a
+            class="next"
+            onclick="plusSlides(1)"
+          >&#10095;</a>
 
-          <div style="text-align: center" class="dots">
-            <span class="dot" onclick="currentSlide(1)"></span>
-            <span class="dot" onclick="currentSlide(2)"></span>
-            <span class="dot" onclick="currentSlide(3)"></span>
+          <div
+            style="text-align: center"
+            class="dots"
+          >
+            <span
+              class="dot"
+              onclick="currentSlide(1)"
+            ></span>
+            <span
+              class="dot"
+              onclick="currentSlide(2)"
+            ></span>
+            <span
+              class="dot"
+              onclick="currentSlide(3)"
+            ></span>
           </div>
+        </div> -->
+        
+        <div class="slideshow-container">
+          <Carousel
+            :items-to-show="1.5"
+            :autoplay="2000"
+          >
+            <Slide
+              v-for="slide in produto.imagens"
+              :key="slide"
+            >
+              <!-- <div> -->
+              <img
+                :key="slide.id"
+                :src="slide.path"
+              />
+              <!-- </div> -->
+            </Slide>
+
+            <template #addons>
+              <Navigation />
+              <Pagination />
+            </template>
+          </Carousel>
         </div>
 
         <br />
 
         <div class="price-details">
           <div class="product-name-div">
-            <h2>{{produto.nome}}</h2>
-            <h6>Código: {{produto.codigo}}</h6>
+            <h2>{{ produto.nome }}</h2>
+            <h6>Código: {{ produto.codigo }}</h6>
           </div>
 
           <div class="price-info">
             <h6>Por Apenas:</h6>
             <h1>
               <span>R$</span>
-              <span>{{toBRL(produto.preco_promocional ?? produto.preco_loja)}}</span>
+              <span>{{ toBRL(produto.preco_promocional ?? produto.preco_loja) }}</span>
             </h1>
           </div>
 
@@ -74,11 +124,15 @@
               <form action="#">
                 <label
                   v-for="cor in produto.cores"
-                  :key="cor.id">
+                  :key="cor.id"
+                >
                   <input
                     v-model="form.cor_id"
                     :style="`background-color:${cor.hexadecimal}`"
-                    type="radio" :name="cor.nome" :value="cor.id"/>
+                    type="radio"
+                    :name="cor.nome"
+                    :value="cor.id"
+                  />
                 </label>
               </form>
             </div>
@@ -87,24 +141,32 @@
           <div class="sizes-div">
             <h6>Tamanhos</h6>
             <div class="sizes">
-              <label v-for="tamanho in tamanhos" :key="tamanho">
+              <label
+                v-for="tamanho in tamanhos"
+                :key="tamanho"
+              >
                 <input
                   v-model="form.tamanho"
-                  type="radio" name="tamanho" :value="tamanho"/>
-                  <span>{{tamanho}}</span>
+                  type="radio"
+                  name="tamanho"
+                  :value="tamanho"
+                />
+                <span>{{ tamanho }}</span>
               </label>
             </div>
           </div>
 
           <div class="add-to-cart">
-            <button @click="addCart">Adicionar no carrinho</button>
+            <button @click="addCart">
+              Adicionar no carrinho
+            </button>
           </div>
         </div>
       </section>
 
       <section class="description-section">
         <h3>Descrição</h3>
-        <p>Chinelo de borracha antiderrapante</p>
+        <p>{{ produto.descricao }}</p>
         <hr />
       </section>
 
@@ -113,7 +175,10 @@
         <div class="product-card-div">
           <div class="card">
             <div class="chinelo-div">
-              <img src="/assets/images/chinelo.png" alt="" />
+              <img
+                src="/assets/images/chinelo.png"
+                alt=""
+              />
             </div>
             <div>
               <h3>Chinelo Emborrachado</h3>
@@ -128,7 +193,10 @@
 
           <div class="card">
             <div class="chinelo-div">
-              <img src="/assets/images/chinelo.png" alt="" />
+              <img
+                src="/assets/images/chinelo.png"
+                alt=""
+              />
             </div>
             <div>
               <h3>Chinelo Emborrachado</h3>
@@ -143,7 +211,10 @@
 
           <div class="card">
             <div class="chinelo-div">
-              <img src="/assets/images/chinelo.png" alt="" />
+              <img
+                src="/assets/images/chinelo.png"
+                alt=""
+              />
             </div>
             <div>
               <h3>Chinelo Emborrachado</h3>
@@ -158,7 +229,10 @@
 
           <div class="card">
             <div class="chinelo-div">
-              <img src="/assets/images/chinelo.png" alt="" />
+              <img
+                src="/assets/images/chinelo.png"
+                alt=""
+              />
             </div>
             <div>
               <h3>Chinelo Emborrachado</h3>
@@ -173,7 +247,10 @@
 
           <div class="card">
             <div class="chinelo-div">
-              <img src="/assets/images/chinelo.png" alt="" />
+              <img
+                src="/assets/images/chinelo.png"
+                alt=""
+              />
             </div>
             <div>
               <h3>Chinelo Emborrachado</h3>
@@ -188,7 +265,10 @@
 
           <div class="card">
             <div class="chinelo-div">
-              <img src="/assets/images/chinelo.png" alt="" />
+              <img
+                src="/assets/images/chinelo.png"
+                alt=""
+              />
             </div>
             <div>
               <h3>Chinelo Emborrachado</h3>
@@ -203,7 +283,9 @@
         </div>
       </section>
     </main>
-    <h3 v-else>O produto não foi encontrado.</h3>
+    <h3 v-else>
+      O produto não foi encontrado.
+    </h3>
   </section>
 </template>
 
@@ -218,7 +300,17 @@ import {
 } from 'vue';
 import { useRouter } from 'vue-router';
 
+// carousel
+import 'vue3-carousel/dist/carousel.css';
+import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel';
+
 export default defineComponent({
+  components: {
+    Carousel,
+    Slide,
+    Pagination,
+    Navigation,
+  },
   props: {
     id: Number,
   },
@@ -232,6 +324,7 @@ export default defineComponent({
     });
 
     const produto = ref<IProdutoCatalogo>();
+    const imagemPrincipal = ref('')
 
     const tamanhos = computed(() => {
       let tamanhoItens: string[] = [];
@@ -249,6 +342,7 @@ export default defineComponent({
         loading.value = true;
         const { data } = await http.get(`/produtos/catalogo/${props.id}`);
         produto.value = data;
+        imagemPrincipal.value = produto.value?.imagem_principal?.path ?? '/assets/images/default.png'
       } finally {
         loading.value = false;
       }
@@ -274,6 +368,7 @@ export default defineComponent({
           id: produto.value?.id,
           cor_id: form.value.cor_id,
           tamanho: form.value.tamanho,
+          quantidade: 1
         });
 
         router.push('/carrinho');
@@ -291,6 +386,7 @@ export default defineComponent({
       tamanhos,
       loading,
       addCart,
+      imagemPrincipal
     };
   },
 });
@@ -339,6 +435,13 @@ export default defineComponent({
   width: 100%;
   max-width: 90px;
   min-width: 58px;
+  cursor: pointer;
+  transition: all .3s ease-in;
+}
+
+.pictures-options img:hover {
+  transform: scale(1.5);
+  border: 1px solid;
 }
 
 .products-image-div {
@@ -624,6 +727,12 @@ label span {
   display: none;
 }
 
+.slideshow-container img {
+  object-fit: contain;
+  height: 250px;
+  width:100%;
+}
+
 @media only screen and (max-width: 1120px) {
   .top-nav-info {
     padding: 0.8rem 1rem;
@@ -778,6 +887,11 @@ label span {
     display: block;
   }
 
+  .slideshow-container {
+    width: 100%;
+    padding: 0 16px;
+  }
+
   .products-image-div {
     width: 100%;
     max-width: 500px;
@@ -832,5 +946,6 @@ label span {
     font-size: 0.8rem;
     margin-bottom: 1rem;
   }
+
 }
 </style>

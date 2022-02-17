@@ -11,19 +11,29 @@
     </div>
     <main>
       <Loading v-if="loading" />
-      <section v-else-if="carrinho && carrinho.length" class="carrinho-details-section">
+      <section
+        v-else-if="carrinho && carrinho.length"
+        class="carrinho-details-section"
+      >
         <div class="carrinho-container">
-          <div v-for="(item, index) in carrinho" class="carrinho-details" :key="index">
+          <div
+            v-for="(item, index) in carrinho"
+            :key="index"
+            class="carrinho-details"
+          >
             <div class="products-carrinho">
               <div class="image">
-                <img src="assets/images/chinelo.png" alt="Chinelo Exemplo" />
+                <img
+                  :src="getImageProduto(item.id)"
+                  alt="Chinelo Exemplo"
+                />
               </div>
 
               <div class="text-carrinho">
                 <h1>{{ getProduto(item.id)?.nome }}</h1>
-                <p><b>Código:</b> {{getProduto(item.id)?.codigo}}</p>
-                <p><b>Tamanho:</b> {{item.tamanho}}</p>
-                <p><b>Cor:</b> {{getNomeCor(item.id, item.cor_id)}}</p>
+                <p><b>Código:</b> {{ getProduto(item.id)?.codigo }}</p>
+                <p><b>Tamanho:</b> {{ item.tamanho }}</p>
+                <p><b>Cor:</b> {{ getNomeCor(item.id, item.cor_id) }}</p>
               </div>
 
               <div class="trash-icon-div">
@@ -33,38 +43,71 @@
               </div>
             </div>
 
-            <hr />
-
             <div class="amount-price-main">
               <div class="amount-div">
                 <p>
                   <b>Quantidade:</b>
                 </p>
                 <div class="container">
-                  <input type="button" onclick="decrementValue()" value="-" />
-                  <input type="text" name="quantity" value="1" id="number"/>
-                  <input type="button" onclick="incrementValue()" value="+" />
+                  <input
+                    v-if="item.quantidade > 1"
+                    type="button"
+                    value="-"
+                    @click="decrementValue(index)"
+                  />
+                  <input
+                    id="number"
+                    v-model="carrinho[index].quantidade"
+                    type="text"
+                    name="quantity"
+                    disa
+                  />
+                  <input
+                    type="button"
+                    value="+"
+                    @click="incrementValue(index)"
+                  />
                 </div>
               </div>
               <div class="price-div">
                 <span>R$</span>
-                <span>{{getProdutoPreco(item.id)}}</span>
+                <span>{{ getProdutoPreco(item.id, item.quantidade) }}</span>
               </div>
             </div>
+            <hr />
           </div>
         </div>
 
         <div class="form-div">
-          <form action="#">
-            <input type="text" placeholder="Nome *" />
-            <input name="email" type="email" placeholder="Email" />
-            <input name="number" type="number" placeholder="Número do whatsApp" />
+          <form
+            @submit.prevent="sendForm"
+          >
+            <input
+              v-model="form.nome"
+              type="text"
+              placeholder="Nome *"
+            />
+            <input
+              v-model="form.email"
+              name="email"
+              type="email"
+              placeholder="Email"
+            />
+            <input
+              v-model="form.telefone"
+              name="number"
+              type="number"
+              placeholder="Número do whatsApp"
+            />
             <textarea
+              v-model="form.extra"
               name="info"
               rows="6"
               placeholder="Informações Adicionais"
             ></textarea>
-            <button type="submit">Compre via Whatsapp</button>
+            <button type="submit">
+              Compre via Whatsapp
+            </button>
           </form>
         </div>
       </section>
@@ -75,84 +118,131 @@
 <script lang="ts">
 import { IProdutoCatalogo } from '@/interfaces/IProduto';
 import {
-  computed, defineComponent, onMounted, ref, watch,
+  defineComponent, onMounted, ref, watch,
 } from 'vue';
 import { useStore } from 'vuex';
 import { ICarrinho } from '@/interfaces/ICarrinho';
 import { http } from '@/service';
 import useCurrency from '@/composables/useCurrency';
 import useAlert from '@/composables/useAlert';
+import Loading from '../components/global/Loading.vue';
 
 export default defineComponent({
-  setup() {
-    const { alerts } = useAlert();
-    const loading = ref(false);
-    const store = useStore();
-    const carrinho = ref<ICarrinho[]>(store.getters.getCarrinho ?? []);
-
-    const produtos = ref<IProdutoCatalogo[]>();
-
-    const fetchProdutos = async () => {
-      try {
-        loading.value = true;
-        const items = carrinho.value.map((item) => item.id);
-        const { data } = await http.get<IProdutoCatalogo[]>('/produtos/catalogo/items', {
-          params: {
-            produto_ids: [...new Set(items)],
-          },
+    components: { Loading },
+    setup() {
+        const form = ref({
+            nome: "",
+            email: "",
+            telefone: "",
+            extra: ""
         });
-
-        produtos.value = data;
-      } catch (error) {
-        console.log(error);
-      } finally {
-        loading.value = false;
-      }
-    };
-    watch(carrinho, () => fetchProdutos());
-
-    const getProduto = (produtoId:number) => {
-      const produto = produtos.value?.find((item) => item.id === produtoId);
-      return produto ?? null;
-    };
-
-    const getProdutoPreco = (produtoId:number) => {
-      const { toBRL } = useCurrency();
-      const produto = produtos.value?.find((item) => item.id === produtoId);
-      return produto ? toBRL(produto.preco_promocional ?? produto.preco_loja) : null;
-    };
-
-    const getNomeCor = (produtoId:number, corId:number) => {
-      const produto = produtos.value?.find((item) => item.id === produtoId);
-      if (produto) {
-        return produto.cores.find((item) => item.id === corId)?.nome;
-      }
-
-      return '';
-    };
-
-    const removeItemCarrinho = async (item: ICarrinho) => {
-      alerts.confirm('Deseja remover esse item do carrinho?')
-        .then((result) => {
-          if (result.isConfirmed) {
-            //
-          }
+        const { alerts } = useAlert();
+        const loading = ref(false);
+        const store = useStore();
+        const carrinho = ref<ICarrinho[]>(store.getters.getCarrinho ?? []);
+        const produtos = ref<IProdutoCatalogo[]>();
+        const fetchProdutos = async () => {
+            try {
+                loading.value = true;
+                const items = carrinho.value.map((item) => item.id);
+                const { data } = await http.get<IProdutoCatalogo[]>("/produtos/catalogo/items", {
+                    params: {
+                        produto_ids: [...new Set(items)],
+                    },
+                });
+                produtos.value = data;
+            }
+            catch (error) {
+                console.log(error);
+            }
+            finally {
+                loading.value = false;
+            }
+        };
+        watch(carrinho, () => fetchProdutos());
+        const getProduto = (produtoId: number) => {
+            const produto = produtos.value?.find((item) => item.id === produtoId);
+            return produto ?? null;
+        };
+        const getProdutoPreco = (produtoId: number, quantidade: number) => {
+            const { toBRL } = useCurrency();
+            const produto = produtos.value?.find((item) => item.id === produtoId);
+            const preco = produto?.preco_promocional ?? produto?.preco_loja ?? 0;
+            const total = Number(preco) * quantidade;
+            return produto ? toBRL(total) : null;
+        };
+        const getNomeCor = (produtoId: number, corId: number) => {
+            const produto = produtos.value?.find((item) => item.id === produtoId);
+            if (produto) {
+                return produto.cores.find((item) => item.id === corId)?.nome;
+            }
+            return "";
+        };
+        const removeItemCarrinho = async (data: ICarrinho) => {
+            alerts.confirm("Deseja remover esse item do carrinho?")
+                .then((result) => {
+                if (result.isConfirmed) {
+                    store.dispatch("removeItemCarrinho", data);
+                    const findIndex = carrinho.value.findIndex(item => (item.id == data.id && item.tamanho == data.tamanho && item.cor_id == data.cor_id));
+                    if (findIndex !== -1) {
+                        carrinho.value.splice(findIndex, 1);
+                    }
+                }
+            });
+        };
+        const getImageProduto = (produtoId: number) => {
+            const produto = getProduto(produtoId);
+            return produto?.imagem_principal ?? "/assets/images/default.png";
+        };
+        let interval = setTimeout(() => null, 1000);
+        const incrementValue = (index: number) => {
+            clearTimeout(interval);
+            carrinho.value[index].quantidade += 1;
+            interval = setTimeout(() => {
+                store.dispatch("updateItemCarrinho", carrinho.value[index]);
+            }, 1000);
+        };
+        const decrementValue = (index: number) => {
+            clearTimeout(interval);
+            carrinho.value[index].quantidade -= 1;
+            interval = setTimeout(() => {
+                store.dispatch("updateItemCarrinho", carrinho.value[index]);
+            }, 1000);
+        };
+        const sendForm = async () => {
+            try {
+                alerts.showLoading('Processando seu pedido...');
+                const {data} = await http.post('/produtos/catalogo/pedido', {
+                  ...form.value,
+                  items: carrinho.value
+                })
+                console.log(data);
+            }
+            catch (error) {
+                alerts.error("Algo inesperado aconteceu");
+                console.log(error);
+            }
+            finally {
+              alerts.hideLoading();
+            }
+        };
+        onMounted(() => {
+            fetchProdutos();
         });
-    };
-
-    onMounted(() => {
-      fetchProdutos();
-    });
-
-    return {
-      loading,
-      carrinho,
-      getProduto,
-      getProdutoPreco,
-      getNomeCor,
-      removeItemCarrinho,
-    };
-  },
+        return {
+            loading,
+            carrinho,
+            getProduto,
+            getProdutoPreco,
+            getNomeCor,
+            removeItemCarrinho,
+            getImageProduto,
+            incrementValue,
+            decrementValue,
+            form,
+            sendForm
+        };
+    }
 });
 </script>
 
@@ -209,7 +299,7 @@ export default defineComponent({
   flex-grow: 1;
   max-width: 100%;
   flex-grow: 1;
-  margin-bottom: 32px;
+  margin-bottom: 46px;
 }
 
 .trash-icon-div {
@@ -252,6 +342,7 @@ hr {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  margin-top: 8px;
 }
 
 .amount-div {

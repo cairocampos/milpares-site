@@ -63,6 +63,7 @@ export default function useAlert(): Composition {
     showLoading(title = 'Carregando...') {
       Swal.fire({
         title,
+        allowOutsideClick: false,
         didOpen() {
           Swal.showLoading();
         },
