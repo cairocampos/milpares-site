@@ -1,7 +1,11 @@
 <template>
   <Backdrop v-if="store.state.backdrop" />
+  <MenuMobile
+    v-if="showMenuMobile"
+    v-model:showMenuMobile="showMenuMobile"
+  />
   <div id="nav">
-    <AppHeader />
+    <AppHeader @on-click-menu-mobile="showMenuMobile = true" />
   </div>
   <router-view v-slot="{ Component, route }">
     <transition
@@ -18,23 +22,26 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent,ref } from 'vue';
 import AppHeader from '@/components/AppHeader.vue';
 import AppFooter from '@/components/AppFooter.vue';
 import Backdrop from './components/Backdrop.vue';
 import { useStore } from 'vuex';
+import MenuMobile from './components/MenuMobile.vue';
 
 export default defineComponent({
   components: {
     AppHeader,
     AppFooter,
-    Backdrop
+    Backdrop,
+    MenuMobile
 },
   setup() {
     const store = useStore();
-
+    const showMenuMobile = ref(false);
     return {
-      store
+      store,
+      showMenuMobile
     }
   },
 });

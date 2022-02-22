@@ -172,9 +172,12 @@ export default defineComponent({
         const getProdutoPreco = (produtoId: number, quantidade: number) => {
             const { toBRL } = useCurrency();
             const produto = produtos.value?.find((item) => item.id === produtoId);
-            const preco = produto?.preco_promocional != '0.00' ? produto?.preco_promocional : produto?.preco_loja != '0.00' ? produto.preco_loja : 0;
-            const total = Number(preco) * quantidade;
-            return produto ? toBRL(total) : null;
+            if(produto) {
+              const total = produto.preco * quantidade;
+              return produto ? toBRL(total) : null;
+            }
+
+            return 0;
         };
         const getNomeCor = (produtoId: number, corId: number) => {
             const produto = produtos.value?.find((item) => item.id === produtoId);

@@ -19,7 +19,7 @@
         <div>
           <h3>{{ produto.nome }}</h3>
           <span>Por Apenas:</span>
-          <span>R$ {{ toBRL(produto.preco_promocional > '0' ? produto.preco_promocional : produto.preco_loja) }}</span>
+          <span>R$ {{ toBRL(produto.preco) }}</span>
         </div>
         <div class="circle-div">
           <div

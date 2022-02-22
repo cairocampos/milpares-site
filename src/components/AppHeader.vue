@@ -52,7 +52,7 @@
         <li>
           <a
             href="#"
-            onclick="openHeaderMenu()"
+            @click="openHeaderMenu"
           ><i class="icofont-navigation-menu"></i></a>
         </li>
       </ul>
@@ -65,16 +65,23 @@ import { computed, defineComponent } from 'vue';
 import { useStore } from 'vuex';
 
 export default defineComponent({
-  setup() {
+  emits: ['on-click-menu-mobile'],
+  setup(props, {emit}) {
     const store = useStore();
     const PAINEL_MILPARES = process.env.VUE_APP_PAINEL;
 
     const carrinhoTotal = computed(() => {
       return store.getters.getCarrinho.length
     })
+
+    const openHeaderMenu = () => {
+      emit('on-click-menu-mobile');
+    }
+
     return {
       PAINEL_MILPARES,
-      carrinhoTotal
+      carrinhoTotal,
+      openHeaderMenu
     };
   },
 });
