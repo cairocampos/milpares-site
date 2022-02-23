@@ -10,6 +10,7 @@
           @click="redirectRouter('Home')"
         >Home</a>
       </li>
+      <hr>
       <li class="pr-2 d-flex align-items-center breadcrumb-item">
         <!-- <img src="@/assets/images/social/breadShape.png" /> -->
         <a
@@ -19,6 +20,7 @@
           {{ onBreadcrumbRoute(primaryRoute) }}
         </a>
       </li>
+      <hr>
       <li class="pr-2 d-flex align-items-center breadcrumb-item">
         <!-- <img
           v-if="$route.path !== '/resgate'"
@@ -110,5 +112,9 @@ import useBreadcrumbs from '@/composables/useBreadcrumbs'
 ul {
   margin: 0;
   padding:0;
+}
+
+.breadcrumb-item > .breadcrumb-item {
+  background: red;
 }
 </style>

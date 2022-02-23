@@ -4,6 +4,8 @@ import Produtos from '../views/Produtos.vue';
 import Promocional from '../views/Promocional.vue';
 import Produto from '../views/Produto.vue';
 import Carrinho from '../views/Carrinho.vue';
+import Revendedor from '../views/Revendedor.vue';
+import ClubeDesconto from '../views/ClubeDesconto.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -29,8 +31,18 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/carrinho',
-    name: 'parrinho',
+    name: 'carrinho',
     component: Carrinho,
+  },
+  {
+    path: '/revendedor',
+    name: 'revendedor',
+    component: Revendedor,
+  },
+  {
+    path: '/clube-do-desconto',
+    name: 'clube-desconto',
+    component: ClubeDesconto,
   },
 ];
 

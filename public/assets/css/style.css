@@ -53,16 +53,6 @@
   src: url("../fonts/Gotham-XLightItalic.otf");
 }
 
-
-/* @font-face {
-  font-family: "";
-  src: url("../fonts/GothamLight.otf");
-}
-@font-face {
-  font-family: "";
-  src: url("../fonts/GothamLight.otf");
-} */
-
 /* ============ Font-Face Start End ============ */
 
 * {
@@ -78,7 +68,7 @@
 .header {
   display: flex;
   justify-content: space-between;
-  padding: 3rem 5rem;
+  padding: 5rem;
   font-family: Gotham-Book;
   white-space: nowrap;
 }
@@ -92,9 +82,7 @@
 }
 
 .cart-content-count {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: grid;
   place-items: center;
   background-color: #ef2866;
   color: #eeeeee;
@@ -137,6 +125,11 @@
   font-size: 1.5rem;
 }
 
+.header-links-div li:nth-child(2) * {
+  color: #ef2866;
+  font-family: Gotham-Bold;
+}
+
 .header-links-div li:hover {
   text-decoration: underline;
 }
@@ -176,6 +169,33 @@
   cursor: pointer;
 }
 
+.sidenav {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #fff;
+  box-shadow: 0px 0px 3px #333;
+  overflow-x: hidden;
+  transition: 0.3s;
+}
+
+.sidenav ul {
+  padding: 3rem;
+}
+
+.sidenav ul li {
+  margin-bottom: 1rem;
+  font-family: Gotham-Light;
+  font-weight: 900;
+}
+
+.sidenav ul li:hover {
+  color: #e61655;
+  text-decoration: underline 3px solid #e61655;
+}
 
 .closebtn {
   font-size: 2.5rem;
@@ -288,7 +308,7 @@
   }
 }
 
-@media screen and (max-width: 1470px) {
+@media screen and (max-width: 1480px) {
   .header {
     padding: 2rem;
   }
@@ -316,8 +336,6 @@
     right: -8px;
     font-size: 10px;
     top: -15px;
-    display: flex;
-    justify-content: center;
   }
 }
 
@@ -342,10 +360,6 @@
     text-decoration: none;
   }
 }
-
-/* ============ Header End ============ */
-
-
 .swal2-container > * {
   font-family: 'Gotham-Light' !important;
 }
@@ -353,3 +367,4 @@
 .swal2-styled.swal2-confirm {
   background-color: #e61655 !important;
 }
+/* ============ Header End ============ */

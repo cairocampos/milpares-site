@@ -2,7 +2,10 @@
   <main class="main-content">
     <section class="banner">
       <div class="banner-shoe-image-div">
-        <img src="assets/images/banner-shoe.png" alt="Banner shoes" />
+        <img
+          src="assets/images/banner-shoe.png"
+          alt="Banner shoes"
+        />
       </div>
       <div class="banner-text-div">
         <h1>MIL PARES</h1>
@@ -10,22 +13,32 @@
           É uma marca de calçados com alto padrão de qualidade e preço
           acessível
         </h2>
-        <router-link to="/produtos">Veja o nosso catálogo</router-link>
+        <router-link to="/produtos">
+          Veja o nosso catálogo
+        </router-link>
       </div>
     </section>
 
     <section class="exclusive-products-container">
       <h1>Conheça nossa linha de produtos exclusivos</h1>
       <div class="exclusives-products-div">
-        <div v-for="categoria in categorias" :key="categoria.categoria" class="products">
+        <div
+          v-for="categoria in categorias"
+          :key="categoria.categoria"
+          class="products"
+        >
           <div>
-            <img :src="categoria.imagem" :alt="categoria.nome" />
+            <img
+              :src="categoria.imagem"
+              :alt="categoria.nome"
+            />
           </div>
           <div>
             <router-link
               class="button"
-              :to="{path: '/produtos', query: {categoria: categoria.categoria}}">
-              {{categoria.nome}}
+              :to="{path: '/produtos', query: {categoria: categoria.categoria}}"
+            >
+              {{ categoria.nome }}
             </router-link>
           </div>
           <div>
@@ -67,18 +80,21 @@
                 src="assets/images/reven-icon4.png"
                 alt="Icone de Vantagens"
               />
-              <span
-                >Painel Administrativo para você solicitar os seus
-                pedidos</span
-              >
+              <span>Painel Administrativo para você solicitar os seus
+                pedidos</span>
             </div>
           </div>
           <div class="revendedora-div">
-            <img src="assets/images/revendedora.png" alt="Foto revendedora" />
+            <img
+              src="assets/images/revendedora.png"
+              alt="Foto revendedora"
+            />
           </div>
         </div>
         <div class="revendedora-button-div">
-          <a :href="PAINEL_MILPARES" target="_blank">QUERO SER REVENDEDORA</a>
+          <router-link to="/revendedor">
+            QUERO SER REVENDEDORA
+          </router-link>
         </div>
       </div>
     </section>
@@ -101,7 +117,10 @@
       <div class="franqueado-text">
         <h2>
           Tem interesse em ser franqueado Mil Pares?
-          <a :href="PAINEL_MILPARES" target="_blank">Clique aqui</a>
+          <a
+            :href="PAINEL_MILPARES"
+            target="_blank"
+          >Clique aqui</a>
         </h2>
       </div>
 
@@ -111,17 +130,13 @@
 
       <div class="vantagens">
         <div class="pink-blob"></div>
-        <span
-          >A Mil Pares Tem todo conhecimento nas vendas de calçados
-          femininos.</span
-        >
+        <span>A Mil Pares Tem todo conhecimento nas vendas de calçados
+          femininos.</span>
       </div>
       <div class="vantagens">
         <div class="pink-blob"></div>
-        <span
-          >Oferece suporte operacional e estrutura de capacitação e
-          treinamento para franqueados e força de vendas.</span
-        >
+        <span>Oferece suporte operacional e estrutura de capacitação e
+          treinamento para franqueados e força de vendas.</span>
       </div>
       <div class="vantagens">
         <div class="pink-blob"></div>

@@ -22,16 +22,20 @@
           </router-link>
         </li>
         <li>
+          <router-link to="/clube-do-desconto">
+            Clube do Desconto
+          </router-link>
+        </li>
+        <li>
           <a
             :href="PAINEL_MILPARES"
             target="_blank"
           >Franqueado</a>
         </li>
         <li>
-          <a
-            :href="PAINEL_MILPARES"
-            target="_blank"
-          >Revendedor</a>
+          <router-link to="/revendedor">
+            Revendedor
+          </router-link>
         </li>
         <li>
           <router-link

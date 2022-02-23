@@ -1,237 +1,142 @@
 <template>
-  <section>
-    <transition
-      name="sidebar"
-      mode="out-in"
-    >
-      <AppSidebar
-        v-if="showFilters"
-        v-model:show="showFilters"
-      >
-        <div class="side-categories">
-          <hr />
-          <h3>Subcategorias</h3>
-          <hr />
-          <ul class="categorias">
-            <li
-              v-for="subcategoria in subcategorias"
-              :key="subcategoria.nome"
-              :class="[subcategoria.nome === route.query?.subcategoria ? 'active' : '']"
-              @click="subcategoriaSelected = subcategoria.nome; showFilters = false"
-            >
-              {{ subcategoria.nome }}
-            </li>
-          </ul>
-        </div>
-      </AppSidebar>
-    </transition>
-
-    <transition
-      name="sidebar"
-      mode="out-in"
-    >
-      <AppSidebar
-        v-if="openNavCategorias"
-        v-model:show="openNavCategorias"
-      >
-        <div class="side-categories">
-          <hr />
-          <h3>Categorias</h3>
-          <hr />
-          <ul class="categorias">
-            <li
-              v-for="categoria in categorias"
-              :key="categoria.nome"
-              :class="[categoria.nome === route.query?.categoria ? 'active' : '']"
-              @click="categoriaSelected = categoria.nome; showFilters = false"
-            >
-              {{ categoria.nome }}
-            </li>
-          </ul>
-        </div>
-      </AppSidebar>
-    </transition>
-
-    <div class="openNav-div">
-      <button @click="openNavCategorias = true">
-        Categorias
-        <i class="icofont-simple-right"></i>
-      </button>
+  <main class="main-content">
+    <div class="side-categories">
+      <hr />
+      <h3>Categorias</h3>
+      <hr />
+      <ul>
+        <li>Botas</li>
+        <li>Chinelos</li>
+        <li>Mocassim</li>
+        <li>Mules</li>
+        <li>Sapatilhas</li>
+      </ul>
     </div>
-    <main class="main-content">
-      <div class="side-categories">
-        <hr />
-        <h3>Categorias</h3>
-        <hr />
-        <ul class="categorias">
-          <li @click="categoriaSelected = ''">
-            Todos
-          </li>
-          <li
-            v-for="categoria in categorias"
-            :key="categoria.nome"
-            :class="[categoria.nome === route.query?.categoria ? 'active' : '']"
-            @click="categoriaSelected = categoria.nome"
-          >
-            {{ categoria.nome }}
-          </li>
-        </ul>
-      </div>
 
-      <div class="catalogo-div">
-        <i
-          class="icofont-filter filter-icon"
-          @click="showFilters = true"
-        >
-          <span>Filtros</span>
-        </i>
-        <div
-          v-if="produtos && produtos.length"
-          class="product-card-div"
-        >
-          <router-link
-            v-for="produto in produtos"
-            :key="produto.id"
-            class="card"
-            :to="{name: 'produto', params: {id: produto.id}}"
-          >
-            <div class="chinelo-div">
-              <img
-                :src="produto.imagem_principal?.path ?? '/assets/images/default.png'"
-                alt=""
-              />
-            </div>
-            <div>
-              <h3>{{ produto.nome }}</h3>
-              <span>Por Apenas: </span>
-              <span>R$ {{ toBRL(produto.preco) }}</span>
-            </div>
-          </router-link>
+    <div class="catalogo-div">
+      <i
+        class="icofont-filter filter-icon"
+        onclick="openFilterMenu()"
+      >
+        <span>Filtros</span>
+      </i>
+      <div class="product-card-div">
+        <div class="card">
+          <div class="chinelo-div">
+            <img
+              src="assets/images/chinelo.png"
+              alt=""
+            />
+          </div>
+          <div>
+            <h3>Chinelo Emborrachado</h3>
+          </div>
+          <div class="see-button">
+            <button onclick="openModal()">
+              Clique e Confira
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="chinelo-div">
+            <img
+              src="assets/images/chinelo.png"
+              alt=""
+            />
+          </div>
+          <div>
+            <h3>Chinelo Emborrachado</h3>
+          </div>
+          <div class="see-button">
+            <button onclick="openModal()">
+              Clique e Confira
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="chinelo-div">
+            <img
+              src="assets/images/chinelo.png"
+              alt=""
+            />
+          </div>
+          <div>
+            <h3>Chinelo Emborrachado</h3>
+          </div>
+          <div class="see-button">
+            <button onclick="openModal()">
+              Clique e Confira
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="chinelo-div">
+            <img
+              src="assets/images/chinelo.png"
+              alt=""
+            />
+          </div>
+          <div>
+            <h3>Chinelo Emborrachado</h3>
+          </div>
+          <div class="see-button">
+            <button onclick="openModal()">
+              Clique e Confira
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="chinelo-div">
+            <img
+              src="assets/images/chinelo.png"
+              alt=""
+            />
+          </div>
+          <div>
+            <h3>Chinelo Emborrachado</h3>
+          </div>
+          <div class="see-button">
+            <button onclick="openModal()">
+              Clique e Confira
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="chinelo-div">
+            <img
+              src="assets/images/chinelo.png"
+              alt=""
+            />
+          </div>
+          <div>
+            <h3>Chinelo Emborrachado</h3>
+          </div>
+          <div class="see-button">
+            <button onclick="openModal()">
+              Clique e Confira
+            </button>
+          </div>
         </div>
       </div>
-    </main>
-
-    <div
-      v-if="podePaginar"
-      class="see-more-button-div"
-    >
-      <Loading v-if="loading" />
-      <button
-        v-else
-        @click="paginate.current_page++"
-      >
-        Ver mais produtos
-      </button>
     </div>
-  </section>
+  </main>
 </template>
 
 <script lang="ts">
-import useCurrency from '@/composables/useCurrency';
-import { ICategoria } from '@/interfaces/ICategoria';
-import { http } from '@/service';
-import {
-  defineComponent, onMounted, ref, watch,
-} from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { IProdutoCatalogo } from '@/interfaces/IProduto';
-import useSearchParams from '@/composables/useSearchParams';
-import { IPaginate } from '@/interfaces/IPaginate';
-import usePaginate from '@/composables/usePaginate';
-import AppSidebar from '@/components/AppSidebar.vue';
+import { defineComponent } from 'vue'
 
 export default defineComponent({
-  components: {
-    AppSidebar
-  },
   setup() {
-    const { paginate, podePaginar } = usePaginate();
-
-    const { toBRL } = useCurrency();
-    const categoriaSelected = ref('');
-    const subcategoriaSelected = ref('');
-    const categorias = ref<ICategoria[]>([]);
-    const subcategorias = ref<ICategoria[]>([]);
-    const produtos = ref<IProdutoCatalogo[]>([]);
-    const route = useRoute();
-    const router = useRouter();
-    const showFilters = ref(false)
-
-    const fetchCategorias = async () => {
-      const { data } = await http.get<ICategoria[]>('/categorias-produtos');
-      categorias.value = data;
-    };
-
-    const fetchSubcategorias = async () => {
-      const { data } = await http.get<ICategoria[]>('/subcategorias-produtos');
-      subcategorias.value = data;
-    };
-
-    const loading = ref(false);
-
-    const fetchProdutos = async () => {
-      loading.value = true;
-      const filtro = useSearchParams({
-        filtros: {
-          categoria: categoriaSelected.value,
-          subcategoria: subcategoriaSelected.value,
-        },
-        page: paginate.value.current_page,
-      });
-      const { data } = await http.get<{data: IProdutoCatalogo[], meta: IPaginate}>(`/produtos/catalogo?${filtro}`);
-      produtos.value = data.data;
-      paginate.value = data?.meta;
-      loading.value = false;
-    };
-
-    const resetProdutos = () => {
-      produtos.value = [];
-      fetchProdutos();
-    };
-
-    watch(categoriaSelected, (val) => {
-      const { query } = route;
-      router.push({ query: { ...query, categoria: val } });
-      resetProdutos();
-    });
-
-    watch(subcategoriaSelected, (val) => {
-      const { query } = route;
-      router.push({ query: { ...query, subcategoria: val } });
-      resetProdutos();
-    });
-
-    watch(() => paginate.value.current_page, () => {
-      fetchProdutos();
-    });
-
-    const openNavCategorias = ref(false)
-
-    onMounted(() => {
-      const categoriaQuery = route.query?.categoria;
-      categoriaSelected.value = String(categoriaQuery ?? '');
-      fetchCategorias();
-      fetchSubcategorias();
-      fetchProdutos();
-    });
-
-    return {
-      openNavCategorias,
-      loading,
-      categoriaSelected,
-      subcategoriaSelected,      
-      categorias,
-      subcategorias,
-      route,
-      toBRL,
-      produtos,
-      paginate,
-      podePaginar,
-      showFilters
-    };
+    //
   },
-});
+})
 </script>
+
 
 <style scoped>
 /*
@@ -614,26 +519,5 @@ export default defineComponent({
   .filter-icon span {
     font-size: 0.8rem;
   }
-}
-
-.sidebar-enter-active {
-  transition: all .3s
-}
-
-.sidebar-leave-active {
-  transition: all .5s
-}
-
-.sidebar-enter-from,
-.sidebar-leave-to {
-  opacity: 0;
-}
-
-.sidebar-enter-from {
-  transform: translateX(100px);
-}
-
-.sidebar-leave-to {
-  width: 0;
 }
 </style>

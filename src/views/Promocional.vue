@@ -1,11 +1,72 @@
 <template>
   <section>
+    <transition
+      name="sidebar"
+      mode="out-in"
+    >
+      <AppSidebar
+        v-if="showFilters"
+        v-model:show="showFilters"
+      >
+        <div class="side-categories">
+          <hr />
+          <h3>Subcategorias</h3>
+          <hr />
+          <ul class="categorias">
+            <li
+              v-for="subcategoria in subcategorias"
+              :key="subcategoria.nome"
+              :class="[subcategoria.nome === route.query?.subcategoria ? 'active' : '']"
+              @click="subcategoriaSelected = subcategoria.nome; showFilters = false"
+            >
+              {{ subcategoria.nome }}
+            </li>
+          </ul>
+        </div>
+      </AppSidebar>
+    </transition>
+
+    <transition
+      name="sidebar"
+      mode="out-in"
+    >
+      <AppSidebar
+        v-if="openNavCategorias"
+        v-model:show="openNavCategorias"
+      >
+        <div class="side-categories">
+          <hr />
+          <h3>Categorias</h3>
+          <hr />
+          <ul class="categorias">
+            <li
+              v-for="categoria in categorias"
+              :key="categoria.nome"
+              :class="[categoria.nome === route.query?.categoria ? 'active' : '']"
+              @click="categoriaSelected = categoria.nome; showFilters = false"
+            >
+              {{ categoria.nome }}
+            </li>
+          </ul>
+        </div>
+      </AppSidebar>
+    </transition>
+
+    <div class="openNav-div">
+      <button @click="openNavCategorias = true">
+        Categorias
+        <i class="icofont-simple-right"></i>
+      </button>
+    </div>
     <main class="main-content">
       <div class="side-categories">
         <hr />
         <h3>Categorias</h3>
         <hr />
         <ul class="categorias">
+          <li @click="categoriaSelected = ''">
+            Todos
+          </li>
           <li
             v-for="categoria in categorias"
             :key="categoria.nome"
@@ -20,7 +81,7 @@
       <div class="catalogo-div">
         <i
           class="icofont-filter filter-icon"
-          onclick="openFilterMenu()"
+          @click="showFilters = true"
         >
           <span>Filtros</span>
         </i>
@@ -45,18 +106,8 @@
               <span>Por Apenas: </span>
               <span>R$ {{ toBRL(produto.preco) }}</span>
             </div>
-            <div class="circle-div">
-              <div
-                v-for="cor in produto.cores"
-                :key="cor.id"
-                :style="`background-color:${cor.hexadecimal}`"
-              ></div>
-            </div>
           </router-link>
         </div>
-        <p v-else>
-          Nenhum item encontrado.
-        </p>
       </div>
     </main>
 
@@ -64,7 +115,11 @@
       v-if="podePaginar"
       class="see-more-button-div"
     >
-      <button @click="paginate.current_page++">
+      <Loading v-if="loading" />
+      <button
+        v-else
+        @click="paginate.current_page++"
+      >
         Ver mais produtos
       </button>
     </div>
@@ -83,34 +138,51 @@ import { IProdutoCatalogo } from '@/interfaces/IProduto';
 import useSearchParams from '@/composables/useSearchParams';
 import { IPaginate } from '@/interfaces/IPaginate';
 import usePaginate from '@/composables/usePaginate';
+import AppSidebar from '@/components/AppSidebar.vue';
 
 export default defineComponent({
+  components: {
+    AppSidebar
+  },
   setup() {
     const { paginate, podePaginar } = usePaginate();
 
     const { toBRL } = useCurrency();
     const categoriaSelected = ref('');
+    const subcategoriaSelected = ref('');
     const categorias = ref<ICategoria[]>([]);
+    const subcategorias = ref<ICategoria[]>([]);
     const produtos = ref<IProdutoCatalogo[]>([]);
     const route = useRoute();
     const router = useRouter();
+    const showFilters = ref(false)
 
     const fetchCategorias = async () => {
       const { data } = await http.get<ICategoria[]>('/categorias-produtos');
       categorias.value = data;
     };
 
+    const fetchSubcategorias = async () => {
+      const { data } = await http.get<ICategoria[]>('/subcategorias-produtos');
+      subcategorias.value = data;
+    };
+
+    const loading = ref(false);
+
     const fetchProdutos = async () => {
+      loading.value = true;
       const filtro = useSearchParams({
         filtros: {
           categoria: categoriaSelected.value,
-          promocional: 1,
+          subcategoria: subcategoriaSelected.value,
+          promocional:1
         },
         page: paginate.value.current_page,
       });
       const { data } = await http.get<{data: IProdutoCatalogo[], meta: IPaginate}>(`/produtos/catalogo?${filtro}`);
       produtos.value = data.data;
       paginate.value = data?.meta;
+      loading.value = false;
     };
 
     const resetProdutos = () => {
@@ -124,38 +196,63 @@ export default defineComponent({
       resetProdutos();
     });
 
+    watch(subcategoriaSelected, (val) => {
+      const { query } = route;
+      router.push({ query: { ...query, subcategoria: val } });
+      resetProdutos();
+    });
+
     watch(() => paginate.value.current_page, () => {
       fetchProdutos();
     });
+
+    const openNavCategorias = ref(false)
 
     onMounted(() => {
       const categoriaQuery = route.query?.categoria;
       categoriaSelected.value = String(categoriaQuery ?? '');
       fetchCategorias();
+      fetchSubcategorias();
       fetchProdutos();
     });
 
     return {
+      openNavCategorias,
+      loading,
       categoriaSelected,
+      subcategoriaSelected,      
       categorias,
+      subcategorias,
       route,
       toBRL,
       produtos,
       paginate,
       podePaginar,
+      showFilters
     };
   },
 });
 </script>
 
 <style scoped>
+/*
+* Prefixed by https://autoprefixer.github.io
+* PostCSS: v8.3.6,
+* Autoprefixer: v10.3.1
+* Browsers: last 4 version
+*/
+
 .header {
   border-bottom: 10px solid #e61655;
 }
 
 .main-content {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  justify-content: space-between;
   padding: 3rem;
+  gap: 3rem;
 }
 
 .side-categories {
@@ -183,17 +280,15 @@ export default defineComponent({
 }
 
 .side-categories ul li {
+  -webkit-transition: 0.3s;
+  -o-transition: 0.3s;
   transition: 0.3s;
   margin-bottom: 15px;
   font-weight: 900;
 }
 
-.categorias li.active {
-  text-decoration: underline 2px;
-  color: #ef2765;
-}
-
 .side-categories ul li:hover {
+  -webkit-text-decoration: underline 2px;
   text-decoration: underline 2px;
   color: #ef2765;
   cursor: pointer;
@@ -207,8 +302,11 @@ export default defineComponent({
   top: 0;
   left: 0;
   background-color: #fff;
+  -webkit-box-shadow: 0px 0px 3px #333;
   box-shadow: 0px 0px 3px #333;
   overflow-x: hidden;
+  -webkit-transition: 0.3s;
+  -o-transition: 0.3s;
   transition: 0.3s;
 }
 
@@ -234,6 +332,7 @@ export default defineComponent({
 
 .sidenav ul li:hover {
   color: #e61655;
+  -webkit-text-decoration: underline 3px solid #e61655;
   text-decoration: underline 3px solid #e61655;
 }
 
@@ -244,6 +343,7 @@ export default defineComponent({
   position: absolute;
   top: 0;
   right: 10px;
+  z-index: 999;
 }
 
 .side-nav-bg {
@@ -275,7 +375,11 @@ export default defineComponent({
 
 .openNav-div {
   display: none;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   padding-top: 3rem;
 }
@@ -285,7 +389,7 @@ export default defineComponent({
   letter-spacing: 2px;
   border-top: 1px solid #e61655;
   border-bottom: 1px solid #e61655;
-  padding: 0.5rem 1.4rem;
+  padding: 0.5rem 3.2rem;
   font-size: 1.4rem;
   color: #e61655;
   background-color: #fff;
@@ -298,7 +402,7 @@ export default defineComponent({
   font-size: 2rem;
   float: right;
   position: relative;
-  left: 35px;
+  left: 60px;
 }
 
 /* ============ Side-Menu Start ============ */
@@ -323,6 +427,7 @@ export default defineComponent({
 
 .side-nav-div li:hover,
 .fixed-side-nav ul li:hover {
+  -webkit-text-decoration: underline 2px #e61655;
   text-decoration: underline 2px #e61655;
   color: #e61655;
   cursor: pointer;
@@ -339,7 +444,7 @@ export default defineComponent({
   cursor: pointer;
   color: #666;
   position: absolute;
-  right: 74px;
+  right: 0px;
   top: -25px;
   font-size: 1.2rem;
   font-family: Gotham-Book;
@@ -355,32 +460,25 @@ export default defineComponent({
 .product-card-div {
   gap: 7rem 5vw;
   display: flex;
-  justify-content: center;
   flex-wrap: wrap;
-}
-
-.product-card-div img {
-  object-fit: cover;
-}
-
-.chinelo-div {
-  border-top: 15px solid #f02866;
-  border-bottom: 15px solid #f02866;
-  transition: 0.3s all;
-  border-radius: 1px;
-}
-
-.chinelo-div img {
-  width: 100%;
-}
-
-.chinelo-div:hover {
-  box-shadow: 0px 0px 10px #666;
+  justify-content: end;
 }
 
 .card {
   flex-grow: 1;
   max-width: 280px;
+}
+
+.chinelo-div {
+  transition: 0.3s all;
+  height: 350px;
+}
+
+.chinelo-div img {
+  border-top: 15px solid #f02866;
+  border-bottom: 15px solid #f02866;
+  width: 100%;
+  height: 100%;
 }
 
 .card h3 {
@@ -401,23 +499,37 @@ export default defineComponent({
   font-size: 1.5rem;
 }
 
-.circle-div {
-  padding-top: 1.5rem;
-  display: flex;
-  gap: 1rem;
-  cursor: pointer;
+.card .see-button {
+  padding-top: 2rem;
+  /* max-width: 280px; */
 }
 
-.circle-div div {
-  border-radius: 50px;
-  min-width: 25px;
-  min-height: 25px;
-  border: 0.1px solid #d3d3d3;
+.card .see-button button {
+  background-color: #000000;
+  border: none;
+  text-transform: uppercase;
+  color: #f0f0f0;
+  width: 100%;
+  border-radius: 20em;
+  padding: 1rem 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: 1px;
 }
+
+.card .see-button button:hover {
+  background-color: #111;
+  color: #fff;
+}
+
 /* ============ Catalogo End ============ */
 
 .see-more-button-div {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
 }
 
@@ -431,6 +543,8 @@ export default defineComponent({
   letter-spacing: 3px;
   padding: 1rem 1.7rem;
   font-size: 1.4rem;
+  -webkit-transition: 0.3s all;
+  -o-transition: 0.3s all;
   transition: 0.3s all;
   font-family: Gotham-Black;
 }
@@ -439,29 +553,28 @@ export default defineComponent({
   cursor: pointer;
   background-color: #8a062d;
   color: #f0dfe4;
+  -webkit-box-shadow: 0px 0px 10px #000;
   box-shadow: 0px 0px 10px #000;
 }
 
 @media screen and (max-width: 1134px) {
+  .main-content {
+    padding: 3rem 1rem;
+    justify-content: center;
+  }
+
   .side-categories {
     display: none;
   }
 
-  .side-nav-div {
-    display: none;
-  }
-
   .product-card-div {
-    gap: 5rem 2rem;
+    gap: 3rem 2rem;
+    justify-content: center;
   }
 
-  .chinelo-div {
+  .chinelo-div img {
     border-top: 10px solid #f02866;
     border-bottom: 10px solid #f02866;
-  }
-
-  .card {
-    max-width: 220px;
   }
 
   .card h3 {
@@ -479,16 +592,6 @@ export default defineComponent({
     font-size: 1rem;
   }
 
-  .circle-div {
-    padding-top: 1rem;
-    gap: 0.5rem;
-  }
-
-  .circle-div div {
-    min-width: 18px;
-    min-height: 18px;
-  }
-
   .see-more-button-div button {
     margin-top: 0rem;
     margin-bottom: 3rem;
@@ -498,17 +601,40 @@ export default defineComponent({
   }
 
   .openNav-div {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
     padding-top: 1rem;
   }
 
   .filter-icon {
     font-size: 1rem;
-    right: 0;
+    right: 10px;
   }
 
   .filter-icon span {
     font-size: 0.8rem;
   }
+}
+
+.sidebar-enter-active {
+  transition: all .3s
+}
+
+.sidebar-leave-active {
+  transition: all .5s
+}
+
+.sidebar-enter-from,
+.sidebar-leave-to {
+  opacity: 0;
+}
+
+.sidebar-enter-from {
+  transform: translateX(100px);
+}
+
+.sidebar-leave-to {
+  width: 0;
 }
 </style>
