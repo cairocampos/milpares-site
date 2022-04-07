@@ -89,8 +89,9 @@
             />
             <input
               v-model="form.telefone"
+              v-maska="'(##) # ####-####'"
               name="number"
-              type="number"
+              type="text"
               placeholder="Número do whatsApp"
             />
             <textarea
@@ -130,7 +131,9 @@ import useCurrency from '@/composables/useCurrency';
 import useAlert from '@/composables/useAlert';
 import Loading from '../components/global/Loading.vue';
 import Breadcrumbs from '../components/Breadcrumbs.vue'
+import {maska} from 'maska'
 export default defineComponent({
+    directives: {maska},
     components: { Loading, CarrinhoVazio, Breadcrumbs },
     setup() {
         const form = ref({
@@ -151,9 +154,9 @@ export default defineComponent({
                 loading.value = true;
                 const items = carrinho.value.map((item) => item.id);
                 const { data } = await http.get<IProdutoCatalogo[]>("/produtos/catalogo/items", {
-                    params: {
-                        produto_ids: [...new Set(items)],
-                    },
+                  params: {
+                    produto_ids: [...new Set(items)],
+                  },
                 });
                 produtos.value = data;
             }
@@ -221,7 +224,7 @@ export default defineComponent({
         const sendForm = async () => {
             try {
                 alerts.showLoading('Processando seu pedido...');
-                const {data} = await http.post<{link:string}>('/produtos/catalogo/pedido', {
+                const {data} = await http.post<{link:string}>('/pedidos', {
                   ...form.value,
                   items: carrinho.value
                 })

@@ -17,15 +17,15 @@
           </router-link>
         </li>
         <li>
-          <router-link to="/produtos/promocao">
+          <router-link to="/promocao">
             Promoção
           </router-link>
         </li>
-        <li>
+        <!-- <li>
           <router-link to="/clube-do-desconto">
             Clube do Desconto
           </router-link>
-        </li>
+        </li> -->
         <li>
           <a
             :href="PAINEL_MILPARES"

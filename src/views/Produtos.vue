@@ -78,15 +78,19 @@
         </ul>
       </div>
 
-      <div class="catalogo-div">
+      <Loading v-if="loading" />
+      <div
+        v-else-if="produtos && produtos.length"
+        class="catalogo-div"
+      >
         <i
           class="icofont-filter filter-icon"
           @click="showFilters = true"
         >
           <span>Filtros</span>
         </i>
+
         <div
-          v-if="produtos && produtos.length"
           class="product-card-div"
         >
           <router-link
@@ -158,12 +162,12 @@ export default defineComponent({
     const showFilters = ref(false)
 
     const fetchCategorias = async () => {
-      const { data } = await http.get<ICategoria[]>('/categorias-produtos');
+      const { data } = await http.get<ICategoria[]>('/categorias');
       categorias.value = data;
     };
 
     const fetchSubcategorias = async () => {
-      const { data } = await http.get<ICategoria[]>('/subcategorias-produtos');
+      const { data } = await http.get<ICategoria[]>('/subcategorias');
       subcategorias.value = data;
     };
 
@@ -178,7 +182,7 @@ export default defineComponent({
         },
         page: paginate.value.current_page,
       });
-      const { data } = await http.get<{data: IProdutoCatalogo[], meta: IPaginate}>(`/produtos/catalogo?${filtro}`);
+      const { data } = await http.get<{data: IProdutoCatalogo[], meta: IPaginate}>(`/produtos?${filtro}`);
       produtos.value = data.data;
       paginate.value = data?.meta;
       loading.value = false;
@@ -478,6 +482,7 @@ export default defineComponent({
   border-bottom: 15px solid #f02866;
   width: 100%;
   height: 100%;
+  object-fit: cover;
 }
 
 .card h3 {

@@ -120,7 +120,7 @@
             <div class="circle-div colors">
               <form action="#">
                 <label
-                  v-for="cor in produto.cores"
+                  v-for="cor in cores"
                   :key="cor.id"
                 >
                   <input
@@ -135,20 +135,26 @@
             </div>
           </div>
 
-          <div class="sizes-div">
+          <Loading v-if="loadingEstoque" />
+          <div
+            v-else-if="estoque && estoque.length"
+            class="sizes-div"
+          >
             <h6>Tamanhos</h6>
-            <div class="sizes">
+            <div
+              class="sizes"
+            >
               <label
-                v-for="tamanho in tamanhos"
-                :key="tamanho"
+                v-for="grade in estoque"
+                :key="grade.tamanho"
               >
                 <input
                   v-model="form.tamanho"
                   type="radio"
                   name="tamanho"
-                  :value="tamanho"
+                  :value="grade.tamanho"
                 />
-                <span>{{ tamanho }}</span>
+                <span>{{ grade.tamanho }}</span>
               </label>
             </div>
           </div>
@@ -183,7 +189,7 @@ import { IProdutoCatalogo } from '@/interfaces/IProduto';
 import { http } from '@/service';
 import store from '@/store';
 import {
-  computed, defineComponent, onMounted, ref,
+  computed, defineComponent, onMounted, ref, watch,
 } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -193,6 +199,8 @@ import Breadcrumbs from '@/components/Breadcrumbs.vue';
 import 'vue3-carousel/dist/carousel.css';
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel';
 import ProdutosRelacionados from '../components/ProdutosRelacionados.vue';
+import {ICor} from "@/interfaces/ICor"
+import {IGrade} from "@/interfaces/IGrade"
 
 export default defineComponent({
   components: {
@@ -216,6 +224,8 @@ export default defineComponent({
     });
 
     const produto = ref<IProdutoCatalogo>();
+    const cores = ref<ICor[]>([])
+    const estoque = ref<IGrade[]>([])
     const imagemPrincipal = ref('')
 
     const tamanhos = computed(() => {
@@ -232,13 +242,43 @@ export default defineComponent({
     const fetchProduto = async () => {
       try {
         loading.value = true;
-        const { data } = await http.get(`/produtos/catalogo/${props.id}`);
+        const { data } = await http.get(`/produtos/${props.id}`);
         produto.value = data;
         imagemPrincipal.value = produto.value?.imagem_principal?.path ?? '/assets/images/default.png'
       } finally {
         loading.value = false;
       }
     };
+
+    const fetchCores = async () => {
+      try {
+        loading.value = true;
+        const { data } = await http.get<ICor[]>(`/produtos/${props.id}/cores`);
+        cores.value = data
+      } finally {
+        loading.value = false;
+      }
+    };
+
+    const loadingEstoque = ref(false)
+    const fetchEstoqueDisponivel = async () => {
+      try {
+        loadingEstoque.value = true;
+        const { data } = await http.get<IGrade[]>(`/produtos/${props.id}/estoque`, {
+          params: {
+            cor_id: form.value.cor_id
+          }
+        });
+        estoque.value = data
+      } finally {
+        loadingEstoque.value = false;
+      }
+    };
+
+    watch(() => form.value.cor_id, () => {
+      form.value.tamanho = 0;
+      fetchEstoqueDisponivel();
+    })
 
     const validate = () => {
       if (form.value.cor_id === 0) {
@@ -301,6 +341,7 @@ export default defineComponent({
 
     onMounted(() => {
       fetchProduto();
+      fetchCores();
     });
 
     return {
@@ -314,7 +355,10 @@ export default defineComponent({
       tamanhos,
       loading,
       addCart,
-      imagemPrincipal
+      imagemPrincipal,
+      cores,
+      estoque,
+      loadingEstoque
     };
   },
 });

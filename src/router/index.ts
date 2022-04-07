@@ -19,7 +19,7 @@ const routes: Array<RouteRecordRaw> = [
     component: Produtos,
   },
   {
-    path: '/produtos/promocao',
+    path: '/promocao',
     name: 'promocional',
     component: Promocional,
   },
@@ -39,11 +39,11 @@ const routes: Array<RouteRecordRaw> = [
     name: 'revendedor',
     component: Revendedor,
   },
-  {
-    path: '/clube-do-desconto',
-    name: 'clube-desconto',
-    component: ClubeDesconto,
-  },
+  // {
+  //   path: '/clube-do-desconto',
+  //   name: 'clube-desconto',
+  //   component: ClubeDesconto,
+  // },
 ];
 
 

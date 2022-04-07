@@ -52,43 +52,94 @@
           </div>
 
           <div class="form-div">
-            <form action="/">
+            <form @submit.prevent="submitForm">
               <div class="form-group">
-                <input
-                  class="form-control"
-                  type="text"
-                  name="nome"
-                  placeholder="Nome completo*"
+                <select
+                  id="unidade"
+                  v-model="form.unidade_id"
+                  name="unidade"
                 >
+                  <option
+                    value="0"
+                    disabled
+                  >
+                    Unidade mais próxima*
+                  </option>
+                  <option
+                    v-for="unidade in unidades"
+                    :key="unidade.id"
+                    :value="unidade.id"
+                  >
+                    {{ unidade.nome }} - {{ unidade.cidade }} / {{ unidade.estado }}
+                  </option>
+                </select>
+              </div>
+              <div>
+                <div class="form-group">
+                  <input
+                    v-model="form.name"
+                    class="form-control"
+                    type="text"
+                    name="nome"
+                    placeholder="Nome completo*"
+                  >
+                </div>
               </div>
 
               <div class="form-group">
                 <label for="Sexo">Sexo</label>
                 <input
+                  id="m"
+                  v-model="form.sexo"
                   class="form-control"
                   type="radio"
-                  name="gender"
+                  value="m"
                 >
-                <span>Masculino</span>
+                <label for="m">Masculino</label>
                 <input
+                  id="f"
+                  v-model="form.sexo"
                   class="form-control"
                   type="radio"
-                  name="gender"
+                  value="f"
                 >
-                <span>Feminino</span>
+                <label for="f">Masculino</label>
+              </div>
+              <div class="form-group">
+                <input
+                  v-model="form.email"
+                  class="form-control"
+                  type="email"
+                  name="email"
+                  placeholder="E-mail*"
+                >
+              </div>
+              <div class="form-group">
+                <input
+                  v-model="form.telefone"
+                  v-maska="'(##) # ####-####'"
+                  class="form-control"
+                  type="text"
+                  name="celular"
+                  placeholder="Celular*"
+                >
               </div>
 
               <div class="form-group">
                 <input
+                  v-model="form.cpf_cnpj"
+                  v-maska="'###.###.###-##'"
                   class="form-control"
                   type="text"
                   name="cpf"
-                  placeholder="CPF"
+                  placeholder="CPF*"
                 >
               </div>
 
               <div class="form-group">
                 <input
+                  v-model="form.cep"
+                  v-maska="'#####-###'"
                   class="form-control"
                   type="text"
                   name="cep"
@@ -98,21 +149,34 @@
 
               <div class="form-group">
                 <input
+                  v-model="form.logradouro"
                   class="form-control"
                   type="text"
-                  name="endereco"
+                  name="endereco*"
                   placeholder="Endereço"
                 >
               </div>
 
               <div class="form-group">
                 <input
+                  v-model="form.bairro"
+                  class="form-control"
+                  type="text"
+                  name="bairro*"
+                  placeholder="Bairro"
+                >
+              </div>
+
+              <div class="form-group">
+                <input
+                  v-model="form.numero"
                   class="form-control"
                   type="text"
                   name="number"
-                  placeholder="Número"
+                  placeholder="Número*"
                 >
                 <input
+                  v-model="form.complemento"
                   class="form-control"
                   type="text"
                   name="complemento"
@@ -121,27 +185,9 @@
               </div>
 
               <div class="form-group">
-                <select
-                  id="unidade"
-                  name="unidade"
-                >
-                  <option value="Estado">
-                    Unidade mais próxima*
-                  </option>
-                  <option value="Unidade A">
-                    Unidade A
-                  </option>
-                  <option value="Unidade B">
-                    Unidade B
-                  </option>
-                  <option value="Unidade C">
-                    Unidade C
-                  </option>
-                </select>
-              </div>
-
-              <div class="form-group">
                 <input
+                  v-model="form.estado"
+                  v-maska="'AA'"
                   class="form-control"
                   type="text"
                   name="estado"
@@ -151,6 +197,7 @@
 
               <div class="form-group">
                 <input
+                  v-model="form.cidade"
                   class="form-control"
                   type="text"
                   name="cidade"
@@ -158,26 +205,10 @@
                 >
               </div>
 
-              <div class="form-group">
-                <input
-                  class="form-control"
-                  type="number"
-                  name="celular"
-                  placeholder="Celular*"
-                >
-              </div>
-
-              <div class="form-group">
-                <input
-                  class="form-control"
-                  type="email"
-                  name="email"
-                  placeholder="E-mail*"
-                >
-              </div>
-
               <div class="button-group">
+                <Loading v-if="loading" />
                 <button
+                  v-else
                   class="button-control"
                   type="submit"
                 >
@@ -193,12 +224,136 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { http } from '@/service';
+import { defineComponent, onMounted, reactive, ref, watch } from 'vue'
+
+type Form = {
+  name:string;
+  cpf_cnpj:string;
+  cep:string;
+  logradouro:string;
+  numero:string;
+  complemento?:string;
+  estado:string;
+  cidade: string;
+  telefone:string;
+  email:string;
+  unidade_id:number;
+  sexo: 'm' | 'f',
+  bairro:string;
+}
+
+type Unidade = {
+  id:number;
+  nome:string;
+  cidade:string;
+  estado:string;
+  logradouro:string;
+  cep:string;
+  numero:string;
+}
+
+import { maska } from 'maska'
+import useAlert from '@/composables/useAlert';
+import Loading from '../components/global/Loading.vue';
+import {ICep} from '@/interfaces/ICep'
+import Swal from 'sweetalert2';
 
 export default defineComponent({
-  setup() {
-    //
-  },
+    directives: { maska },
+    components: { Loading },
+    setup() {
+        const initialState: Form = {
+            cep: "",
+            cidade: "",
+            cpf_cnpj: "",
+            email: "",
+            estado: "",
+            logradouro: "",
+            name: "",
+            numero: "",
+            telefone: "",
+            unidade_id: 0,
+            complemento: "",
+            sexo: "m",
+            bairro: ""
+        }
+
+        const form = reactive<Form>({...initialState});
+        const unidades = ref<Unidade[]>([]);
+        const loading = ref(false);
+        const { alerts } = useAlert();
+
+        const fetchCep = async (cep: string) => {
+          const { data: {data} } = await http.get<{data: ICep}>(`/cep?cep=${cep}`);
+          form.logradouro = data.logradouro;
+          form.estado = data.uf;
+          form.bairro = data.bairro;
+          form.cidade = data.localidade;
+        };
+
+        watch(() => form.cep, cep => {
+          if(cep.length === 9) {
+            fetchCep(cep)
+          }
+        })
+
+        watch(() => form.unidade_id, val => {
+          if(val) {
+            const unidade = unidades.value.find(item => item.id == val);
+          
+            if(unidade) {
+              Swal.fire({
+                icon:"question",
+                title: unidade.nome,
+                html: `
+                  <ul>
+                    <li>Unidade situada na:</li>
+                    <li>${unidade.logradouro}, Nº ${unidade.numero}</li>
+                    <li>${unidade.cidade} / ${unidade.estado}</li>
+                  </ul>
+                `
+              })
+            }
+          }
+        })
+
+        const fetchUnidades = async () => {
+            const { data } = await http.get<Unidade[]>("/unidades");
+            unidades.value = data;
+        };
+
+        const resetForm = () => {
+          Object.assign(form, initialState);
+        }
+
+        const submitForm = () => {
+          alerts.confirm('Após a inscrição, você receberá as instruções via email para acessar o portal.')
+            .then(async result => {
+              if(result.isConfirmed) {
+                try {
+                  loading.value = true;
+                  await http.post("/revendedores", form);
+                  resetForm();
+                  alerts.success("Parabéns! Acesse seu email e complete o cadastro!");
+                }
+                catch (error) {
+                  alerts.error(error);
+                }
+                finally {
+                  loading.value = false;
+                }
+              }
+            })
+        };
+        onMounted(() => fetchUnidades());
+        return {
+            form,
+            unidades,
+            submitForm,
+            loading
+        };
+    }
 })
 </script>
 
@@ -312,9 +467,10 @@ export default defineComponent({
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 1rem;
   margin-bottom: 1.2rem;
+  gap: 1rem;
 }
+
 
 .form-group span {
   position: relative;
@@ -327,7 +483,6 @@ export default defineComponent({
 
 .form-group:nth-of-type(2) {
   margin-bottom: 0.8rem;
-  padding: 0 1rem;
 }
 
 .form-group:nth-of-type(2) label {
@@ -356,7 +511,7 @@ export default defineComponent({
   outline: 2px solid #222;
 }
 
-.form-group:nth-of-type(6) input:nth-of-type(1) {
+.form-group:nth-of-type(7) input:nth-of-type(1) {
   max-width: 30%;
 }
 
