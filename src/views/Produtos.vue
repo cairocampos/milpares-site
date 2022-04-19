@@ -13,10 +13,13 @@
           <h3>Subcategorias</h3>
           <hr />
           <ul class="categorias">
+            <li @click="subcategoriaSelected = ''">
+              Todos
+            </li>
             <li
               v-for="subcategoria in subcategorias"
               :key="subcategoria.nome"
-              :class="[subcategoria.nome === route.query?.subcategoria ? 'active' : '']"
+              :class="[subcategoria.nome == route.query?.subcategoria ? 'active' : '']"
               @click="subcategoriaSelected = subcategoria.nome; showFilters = false"
             >
               {{ subcategoria.nome }}
@@ -64,7 +67,7 @@
         <h3>Categorias</h3>
         <hr />
         <ul class="categorias">
-          <li @click="categoriaSelected = ''">
+          <li @click="categoriaSelected = ''; subcategoriaSelected = ''">
             Todos
           </li>
           <li
@@ -78,9 +81,8 @@
         </ul>
       </div>
 
-      <Loading v-if="loading" />
+
       <div
-        v-else-if="produtos && produtos.length"
         class="catalogo-div"
       >
         <i
@@ -90,7 +92,10 @@
           <span>Filtros</span>
         </i>
 
+        <Loading v-if="loading" />
+
         <div
+          v-else-if="produtos && produtos.length"
           class="product-card-div"
         >
           <router-link
@@ -112,6 +117,12 @@
             </div>
           </router-link>
         </div>
+        <p
+          v-else
+          style="margin-top: 32px;"
+        >
+          Nenhum item encontrado...
+        </p>
       </div>
     </main>
 
@@ -223,7 +234,7 @@ export default defineComponent({
       openNavCategorias,
       loading,
       categoriaSelected,
-      subcategoriaSelected,      
+      subcategoriaSelected,
       categorias,
       subcategorias,
       route,
@@ -290,7 +301,8 @@ export default defineComponent({
   font-weight: 900;
 }
 
-.side-categories ul li:hover {
+.side-categories ul li:hover,
+.side-categories ul li.active {
   -webkit-text-decoration: underline 2px;
   text-decoration: underline 2px;
   color: #ef2765;

@@ -176,9 +176,16 @@
         :id="45"
       />
     </main>
-    <h3 v-else>
-      O produto não foi encontrado.
-    </h3>
+    <div
+      v-else
+      class="wrapper__not-found"
+    >
+      <ProdutoNaoEncontrado />
+      <p>O Produto que procura foi removido ou está indisponível.</p>
+      <router-link to="/produtos">
+        Voltar
+      </router-link>
+    </div>
   </section>
 </template>
 
@@ -201,6 +208,7 @@ import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel';
 import ProdutosRelacionados from '../components/ProdutosRelacionados.vue';
 import {ICor} from "@/interfaces/ICor"
 import {IGrade} from "@/interfaces/IGrade"
+import ProdutoNaoEncontrado from '@/components/ProdutoNaoEncontrado.vue';
 
 export default defineComponent({
   components: {
@@ -209,7 +217,8 @@ export default defineComponent({
     Pagination,
     Navigation,
     Breadcrumbs,
-    ProdutosRelacionados
+    ProdutosRelacionados,
+    ProdutoNaoEncontrado
 },
   props: {
     id: Number,
@@ -843,5 +852,19 @@ input[type="radio"]:checked ~ span:first-of-type {
     font-size: .7rem;
     margin-bottom: 1.5rem;
   }
+}
+
+.wrapper__not-found {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 64px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+  flex-direction: column;
+}
+
+.wrapper__not-found > * {
+  margin-bottom: 16px;
 }
 </style>

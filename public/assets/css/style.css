@@ -111,10 +111,10 @@
   display: none;
 }
 
-#headerSidenav ul li:nth-child(2) {
+/* #headerSidenav ul li:nth-child(2) {
   color: #ef2765;
   font-size: 900;
-}
+} */
 
 .header-links-div img {
   width: 2.5rem;
@@ -125,10 +125,10 @@
   font-size: 1.5rem;
 }
 
-.header-links-div li:nth-child(2) * {
+/* .header-links-div li:nth-child(2) * {
   color: #ef2866;
   font-family: Gotham-Bold;
-}
+} */
 
 .header-links-div li:hover {
   text-decoration: underline;
