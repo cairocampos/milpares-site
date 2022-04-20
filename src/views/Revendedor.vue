@@ -52,7 +52,14 @@
           </div>
 
           <div class="form-div">
-            <form @submit.prevent="submitForm">
+            <a
+              :href="PAINEL_MILPARES"
+              style="margin-bottom: 16px;"
+            >Já tem acesso ? Clique aqui</a>
+            <form
+              style="margin-top: 16px;"
+              @submit.prevent="submitForm"
+            >
               <div class="form-group">
                 <select
                   id="unidade"
@@ -214,6 +221,12 @@
                 >
                   CADASTRAR
                 </button>
+                <button
+                  class="button-control"
+                  type="submit"
+                >
+                  JÁ SOU CADASTRADO
+                </button>
               </div>
             </form>
           </div>
@@ -263,6 +276,7 @@ export default defineComponent({
     directives: { maska },
     components: { Loading },
     setup() {
+      const PAINEL_MILPARES = process.env.VUE_APP_PAINEL;
         const initialState: Form = {
             cep: "",
             cidade: "",
@@ -301,7 +315,7 @@ export default defineComponent({
         watch(() => form.unidade_id, val => {
           if(val) {
             const unidade = unidades.value.find(item => item.id == val);
-          
+
             if(unidade) {
               Swal.fire({
                 icon:"question",
@@ -351,7 +365,8 @@ export default defineComponent({
             form,
             unidades,
             submitForm,
-            loading
+            loading,
+            PAINEL_MILPARES
         };
     }
 })
@@ -528,6 +543,21 @@ export default defineComponent({
   transition: 0.3s;
 }
 
+.button-control {
+  margin-top: 16px;
+}
+
+.button-control:last-child {
+  background-color: #FFF;
+  border: 2px solid #EF2866;
+  color: #ef2866;
+}
+
+.button-control:last-child:hover {
+  background-color: #EF2866;
+  color: #FFF;
+}
+
 .button-group .button-control:hover {
   background-color: #ee346f;
   cursor: pointer;
@@ -559,17 +589,17 @@ export default defineComponent({
     font-size: 1rem;
     letter-spacing: 1px;
   }
-  
+
   .revendedores-container h1 {
     font-size: 1.4rem;
     padding: 0;
     letter-spacing: 1px;
   }
-  
+
   .vantagens-revendedora {
     padding: 1.5rem 0rem;
   }
-  
+
   .vantagens-revendedora .vantagens-div .icon-div {
     gap: .6rem;
   }
@@ -577,11 +607,11 @@ export default defineComponent({
   .vantagens-revendedora .vantagens-div .icon-div img {
     max-width: 40px;
   }
-  
+
   .vantagens-revendedora .vantagens-div div span {
     font-size: .8rem;
   }
-  
+
   .free-fast-easy-div {
     padding-top: 1rem;
   }
@@ -590,39 +620,39 @@ export default defineComponent({
     padding-top: 5rem;
     max-width: 100px;
   }
-  
+
   .free-fast-easy-div p:nth-of-type(1) {
     font-size: 1rem;
     letter-spacing: 1px;
   }
-  
+
   .free-fast-easy-div p:nth-of-type(2) {
     font-size: 1.2rem;
     letter-spacing: 1px;
   }
-  
+
   .form-group {
     margin-bottom: 1rem;
   }
-  
+
   .form-group span {
     position: relative;
     right: 0.8rem;
   }
-  
+
   .form-group:nth-of-type(1) {
     margin-bottom: 0.8rem;
   }
-  
+
   .form-group:nth-of-type(2) {
     margin-bottom: 0.8rem;
     padding: 0rem;
   }
-  
+
   .form-group:nth-of-type(2) label {
     margin-right: 0rem;
   }
-  
+
   .form-group input[type="text"],
   .form-group input[type="number"],
   .form-group input[type="email"],
@@ -630,7 +660,7 @@ export default defineComponent({
     padding: 0.6rem;
     font-size: 0.9rem;
   }
-  
+
   .button-group .button-control {
     height: 40px;
     width: 100%;
