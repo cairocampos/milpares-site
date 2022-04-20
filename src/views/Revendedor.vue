@@ -221,12 +221,13 @@
                 >
                   CADASTRAR
                 </button>
-                <button
+                <a
                   class="button-control"
-                  type="submit"
+                  type="button"
+                  :href="PAINEL_MILPARES"
                 >
                   JÁ SOU CADASTRADO
-                </button>
+                </a>
               </div>
             </form>
           </div>
@@ -551,6 +552,10 @@ export default defineComponent({
   background-color: #FFF;
   border: 2px solid #EF2866;
   color: #ef2866;
+  width: 100%;
+  padding: 16px;
+  display: inline-block;
+  text-align: center;
 }
 
 .button-control:last-child:hover {
