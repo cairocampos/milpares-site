@@ -17,26 +17,25 @@ export default createStore({
       // state.carrinho = payload;
       const storage = localStorage.getItem('cart');
       if (storage) {
-        const data: ICarrinho[] = JSON.parse(storage);
+        const data: ICarrinho[] = JSON.parse(atob(storage));
         const item = data.find(el => (
           el.cor_id == payload.cor_id && el.id == payload.id && el.tamanho == payload.tamanho
         ))
-        
+
         if(!item) {
           data.push(payload);
           state.carrinho = data;
-          localStorage.setItem('cart', JSON.stringify(data));
+          localStorage.setItem('cart', btoa(JSON.stringify(data)));
         }
 
       } else {
-        localStorage.setItem('cart', JSON.stringify([payload]));
+        localStorage.setItem('cart', btoa(JSON.stringify([payload])));
       }
     },
   },
   actions: {
     verificarCarrinho({commit, getters}) {
       const carrinho = getters.getCarrinhoStorage;
-      console.log(carrinho)
       commit('SET_CARRINHO', carrinho);
     },
     limparCarrinho({commit}) {
@@ -51,7 +50,7 @@ export default createStore({
 
       if(findIndex !== -1) {
         items.splice(findIndex, 1);
-        localStorage.setItem('cart', JSON.stringify(items));
+        localStorage.setItem('cart', btoa(JSON.stringify(items)));
         commit('SET_CARRINHO', items);
       }
     },
@@ -63,7 +62,7 @@ export default createStore({
 
       if(findIndex !== -1) {
         items[findIndex] = data;
-        localStorage.setItem('cart', JSON.stringify(items));
+        localStorage.setItem('cart', btoa(JSON.stringify(items)));
         commit('SET_CARRINHO', items);
       }
     },
@@ -83,7 +82,7 @@ export default createStore({
     getCarrinhoStorage() {
       try {
         const storage = localStorage.getItem('cart');
-        return storage ? JSON.parse(storage) : []
+        return storage ? JSON.parse(atob(storage)) : []
       } catch (error) {
         return []
       }

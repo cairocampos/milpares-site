@@ -51,15 +51,16 @@
                   />
                   <input
                     id="number"
-                    v-model="carrinho[index].quantidade"
+                    disabled
+                    :value="carrinho[index].quantidade"
                     type="text"
                     name="quantity"
-                    disa
                   />
                   <input
+                    v-if="item.quantidade < getLimitQuantity(item)"
                     type="button"
                     value="+"
-                    @click="incrementValue(index)"
+                    @click="incrementValue(index, item)"
                   />
                 </div>
               </div>
@@ -73,9 +74,7 @@
         </div>
 
         <div class="form-div">
-          <form
-            @submit.prevent="checkForm"
-          >
+          <form @submit.prevent="checkForm">
             <input
               v-model="form.nome"
               type="text"
@@ -105,7 +104,7 @@
             </button>
             <button
               type="button"
-              style="background-color: red;"
+              style="background-color: red"
               @click="clear"
             >
               Limpar Carrinho
@@ -119,166 +118,199 @@
 </template>
 
 <script lang="ts">
-import CarrinhoVazio from '@/components/carrinho/CarrinhoVazio.vue';
-import { IProdutoCatalogo } from '@/interfaces/IProduto';
-import {
-  defineComponent, onMounted, ref, watch,
-} from 'vue';
-import { useStore } from 'vuex';
-import { ICarrinho } from '@/interfaces/ICarrinho';
-import { http } from '@/service';
-import useCurrency from '@/composables/useCurrency';
-import useAlert from '@/composables/useAlert';
-import Loading from '../components/global/Loading.vue';
-import Breadcrumbs from '../components/Breadcrumbs.vue'
-import {maska} from 'maska'
+import CarrinhoVazio from "@/components/carrinho/CarrinhoVazio.vue";
+import { IProdutoCatalogo } from "@/interfaces/IProduto";
+import { defineComponent, onMounted, ref, watch } from "vue";
+import { useStore } from "vuex";
+import { ICarrinho } from "@/interfaces/ICarrinho";
+import { http } from "@/service";
+import useCurrency from "@/composables/useCurrency";
+import useAlert from "@/composables/useAlert";
+import Loading from "../components/global/Loading.vue";
+import Breadcrumbs from "../components/Breadcrumbs.vue";
+import { maska } from "maska";
+import { IGrade } from "@/interfaces/IGrade";
 export default defineComponent({
-    directives: {maska},
-    components: { Loading, CarrinhoVazio, Breadcrumbs },
-    setup() {
-        const form = ref({
-            nome: "",
-            email: "",
-            telefone: "",
-            extra: ""
+  directives: { maska },
+  components: { Loading, CarrinhoVazio, Breadcrumbs },
+  setup() {
+    const form = ref({
+      nome: "",
+      email: "",
+      telefone: "",
+      extra: "",
+    });
+    const { alerts } = useAlert();
+    const loading = ref(false);
+    const store = useStore();
+    const carrinho = ref<ICarrinho[]>([]);
+    const variacoes = ref<IGrade[]>([])
+
+    const fetchVariacoes = async ({id, cor_id, tamanho}: ICarrinho) => {
+      try {
+        const { data } = await http.get<IGrade>(`/produtos/${id}/variacoes`, {
+          params: {
+            cor_id,
+            tamanho
+          }
+        })
+
+        variacoes.value.push(data);
+      } finally {}
+    }
+
+    const setVariacoes = async () => {
+      await Promise.all(carrinho.value.map(item => fetchVariacoes(item)))
+    }
+
+    const produtos = ref<IProdutoCatalogo[]>();
+    const fetchProdutos = async () => {
+      try {
+        variacoes.value = [];
+        loading.value = true;
+        await setVariacoes();
+        const items = carrinho.value.map((item) => item.id);
+        const { data } = await http.get<IProdutoCatalogo[]>("/produtos/catalogo/items", {
+          params: {
+            produto_ids: [...new Set(items)],
+          },
         });
-        const { alerts } = useAlert();
-        const loading = ref(false);
-        const store = useStore();
-        const carrinho = ref<ICarrinho[]>([]);
+        produtos.value = data;
+      } catch (error) {
+        console.log(error);
+      } finally {
+        loading.value = false;
+      }
+    };
+    watch(carrinho, () => fetchProdutos());
+    const getProduto = (produtoId: number) => {
+      const produto = produtos.value?.find((item) => item.id === produtoId);
+      return produto ?? null;
+    };
+    const getProdutoPreco = (produtoId: number, quantidade: number) => {
+      const { toBRL } = useCurrency();
+      const produto = produtos.value?.find((item) => item.id === produtoId);
+      if (produto) {
+        const total = produto.preco * quantidade;
+        return produto ? toBRL(total) : null;
+      }
 
+      return 0;
+    };
+    const getNomeCor = (produtoId: number, corId: number) => {
+      const produto = produtos.value?.find((item) => item.id === produtoId);
+      if (produto) {
+        return produto.cores.find((item) => item.id === corId)?.nome;
+      }
+      return "";
+    };
 
-        const produtos = ref<IProdutoCatalogo[]>();
-        const fetchProdutos = async () => {
-            try {
-                loading.value = true;
-                const items = carrinho.value.map((item) => item.id);
-                const { data } = await http.get<IProdutoCatalogo[]>("/produtos/catalogo/items", {
-                  params: {
-                    produto_ids: [...new Set(items)],
-                  },
-                });
-                produtos.value = data;
-            }
-            catch (error) {
-                console.log(error);
-            }
-            finally {
-                loading.value = false;
-            }
-        };
-        watch(carrinho, () => fetchProdutos());
-        const getProduto = (produtoId: number) => {
-            const produto = produtos.value?.find((item) => item.id === produtoId);
-            return produto ?? null;
-        };
-        const getProdutoPreco = (produtoId: number, quantidade: number) => {
-            const { toBRL } = useCurrency();
-            const produto = produtos.value?.find((item) => item.id === produtoId);
-            if(produto) {
-              const total = produto.preco * quantidade;
-              return produto ? toBRL(total) : null;
-            }
+    const getLimitQuantity = (item: ICarrinho) => {
+      const variacao = variacoes.value.find(v => v.cor_id == item.cor_id && v.tamanho == item.tamanho && v.produto_id == item.id)
+      if(variacao) {
+        return variacao.quantidade;
+      }
 
-            return 0;
-        };
-        const getNomeCor = (produtoId: number, corId: number) => {
-            const produto = produtos.value?.find((item) => item.id === produtoId);
-            if (produto) {
-                return produto.cores.find((item) => item.id === corId)?.nome;
-            }
-            return "";
-        };
-        const removeItemCarrinho = async (data: ICarrinho) => {
-            alerts.confirm("Deseja remover esse item do carrinho?")
-                .then((result) => {
-                if (result.isConfirmed) {
-                    store.dispatch("removeItemCarrinho", data);
-                    const findIndex = carrinho.value.findIndex(item => (item.id == data.id && item.tamanho == data.tamanho && item.cor_id == data.cor_id));
-                    if (findIndex !== -1) {
-                        carrinho.value.splice(findIndex, 1);
-                    }
-                }
-            });
-        };
-        const getImageProduto = (produtoId: number) => {
-            const produto = getProduto(produtoId);
-            return produto?.imagem_principal?.path ?? "/assets/images/default.png";
-        };
-        let interval = setTimeout(() => null, 1000);
-        const incrementValue = (index: number) => {
-            clearTimeout(interval);
-            carrinho.value[index].quantidade += 1;
-            interval = setTimeout(() => {
-                store.dispatch("updateItemCarrinho", carrinho.value[index]);
-            }, 1000);
-        };
-        const decrementValue = (index: number) => {
-            clearTimeout(interval);
-            carrinho.value[index].quantidade -= 1;
-            interval = setTimeout(() => {
-                store.dispatch("updateItemCarrinho", carrinho.value[index]);
-            }, 1000);
-        };
+      return 0
+    }
 
-        const sendForm = async () => {
-            try {
-                alerts.showLoading('Processando seu pedido...');
-                const {data} = await http.post<{link:string}>('/pedidos', {
-                  ...form.value,
-                  items: carrinho.value
-                })
-                window.open(data.link, '_blank')
-            }
-            catch (error) {
-                alerts.error("Algo inesperado aconteceu");
-                console.log(error);
-            }
-            finally {
-              alerts.hideLoading();
-            }
-        };
-
-        const checkForm = async () => {
-          const { nome, email, telefone } = form.value
-          if(!nome) return alerts.info('Favor informar um nome.');
-          if(!email) return alerts.info('Informe um email.');
-          if(!telefone) return alerts.info('Informe um telefone.');
-
-          sendForm();
-        }
-
-        const clear = () => {
-          store.dispatch('limparCarrinho');
-          carrinho.value = [];
-          form.value = {
-            email: "",
-            extra:"",
-            nome: "",
-            telefone:""
+    const removeItemCarrinho = async (data: ICarrinho) => {
+      alerts.confirm("Deseja remover esse item do carrinho?").then((result) => {
+        if (result.isConfirmed) {
+          store.dispatch("removeItemCarrinho", data);
+          const findIndex = carrinho.value.findIndex(
+            (item) =>
+              item.id == data.id && item.tamanho == data.tamanho && item.cor_id == data.cor_id
+          );
+          if (findIndex !== -1) {
+            carrinho.value.splice(findIndex, 1);
           }
         }
+      });
+    };
+    const getImageProduto = (produtoId: number) => {
+      const produto = getProduto(produtoId);
+      return produto?.imagem_principal?.path ?? "/assets/images/default.png";
+    };
+    let interval = setTimeout(() => null, 1000);
+    const incrementValue = (index: number, item: ICarrinho) => {
+      clearTimeout(interval);
 
-        onMounted(() => {
-            store.dispatch('verificarCarrinho')
-            carrinho.value = store.getters.getCarrinho
-            fetchProdutos();
+      const limit = getLimitQuantity(item);
+
+      if(carrinho.value[index].quantidade < limit) {
+        carrinho.value[index].quantidade += 1;
+        interval = setTimeout(() => {
+          store.dispatch("updateItemCarrinho", carrinho.value[index]);
+        }, 1000);
+      }
+
+    };
+    const decrementValue = (index: number) => {
+      clearTimeout(interval);
+      carrinho.value[index].quantidade -= 1;
+      interval = setTimeout(() => {
+        store.dispatch("updateItemCarrinho", carrinho.value[index]);
+      }, 1000);
+    };
+
+    const sendForm = async () => {
+      try {
+        alerts.showLoading("Processando seu pedido...");
+        const { data } = await http.post<{ link: string }>("/pedidos", {
+          ...form.value,
+          items: carrinho.value,
         });
-        return {
-            clear,
-            loading,
-            carrinho,
-            getProduto,
-            getProdutoPreco,
-            getNomeCor,
-            removeItemCarrinho,
-            getImageProduto,
-            incrementValue,
-            decrementValue,
-            form,
-            checkForm
-        };
-    }
+        window.open(data.link, "_blank");
+      } catch (error) {
+        alerts.error("Algo inesperado aconteceu");
+        console.log(error);
+      } finally {
+        alerts.hideLoading();
+      }
+    };
+
+    const checkForm = async () => {
+      const { nome, email, telefone } = form.value;
+      if (!nome) return alerts.info("Favor informar um nome.");
+      if (!email) return alerts.info("Informe um email.");
+      if (!telefone) return alerts.info("Informe um telefone.");
+
+      sendForm();
+    };
+
+    const clear = () => {
+      store.dispatch("limparCarrinho");
+      carrinho.value = [];
+      form.value = {
+        email: "",
+        extra: "",
+        nome: "",
+        telefone: "",
+      };
+    };
+
+    onMounted(() => {
+      store.dispatch("verificarCarrinho");
+      carrinho.value = store.getters.getCarrinho;
+      // fetchProdutos();
+    });
+    return {
+      clear,
+      loading,
+      carrinho,
+      getProduto,
+      getProdutoPreco,
+      getNomeCor,
+      removeItemCarrinho,
+      getImageProduto,
+      incrementValue,
+      decrementValue,
+      form,
+      checkForm,
+      getLimitQuantity
+    };
+  },
 });
 </script>
 
@@ -326,7 +358,7 @@ export default defineComponent({
 }
 
 .carrinho-container {
-  display:flex;
+  display: flex;
   flex-direction: column;
   flex-grow: 1;
 }
