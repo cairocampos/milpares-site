@@ -425,6 +425,7 @@ export default defineComponent({
   width: 100%;
   height: 100px;
   min-width: 58px;
+  object-fit: cover;
 }
 
 .scroll .arrow i {
@@ -468,7 +469,7 @@ export default defineComponent({
 .products-image-div img {
   width: 100%;
   height: 100%;
-  object-fit: fill;
+  object-fit: cover;
 }
 
 .price-details {
