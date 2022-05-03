@@ -364,6 +364,7 @@ input[type="radio"]:checked ~ span:first-of-type {
   border-bottom: 15px solid #f02866;
   width: 100%;
   height: 100%;
+  object-fit: cover;
 }
 
 .card h3 {

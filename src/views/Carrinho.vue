@@ -389,11 +389,13 @@ export default defineComponent({
 }
 
 .image {
-  max-width: 130px;
+  width: 130px;
+  height: 130px;
 }
 
 .image img {
   width: 100%;
+  object-fit: cover;
 }
 
 .text-carrinho {

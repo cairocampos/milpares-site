@@ -597,7 +597,7 @@ input[type="radio"]:checked ~ span:first-of-type {
 
 .add-to-cart button {
   border: none;
-  background-color: #5e984c;
+  background-color: #f02866;
   color: #fffeff;
   width: 100%;
   height: 100%;
