@@ -111,7 +111,7 @@
             <h6>Por Apenas:</h6>
             <h1>
               <span>R$</span>
-              <span>{{ toBRL(produto.preco) }}</span>
+              <span>{{ toBRL(hasAuthorized ? produto.preco_clube_desconto : produto.preco) }}</span>
             </h1>
           </div>
 
@@ -192,7 +192,7 @@
 <script lang="ts">
 import useAlert from '@/composables/useAlert';
 import useCurrency from '@/composables/useCurrency';
-import { IProdutoCatalogo } from '@/interfaces/IProduto';
+import { IProdutoClubeDesconto } from '@/interfaces/IProduto';
 import { http } from '@/service';
 import store from '@/store';
 import {
@@ -232,7 +232,7 @@ export default defineComponent({
       tamanho: 0,
     });
 
-    const produto = ref<IProdutoCatalogo>();
+    const produto = ref<IProdutoClubeDesconto>();
     const cores = ref<ICor[]>([])
     const estoque = ref<IGrade[]>([])
     const imagemPrincipal = ref('')
@@ -348,12 +348,21 @@ export default defineComponent({
       }
     }
 
+    const hasAuthorized = ref(false);
+    const checkAuthorization = () => {
+      const auth = localStorage.getItem('milpares_authorization')
+      hasAuthorized.value = auth ? true : false;
+    }
+
     onMounted(() => {
       fetchProduto();
       fetchCores();
+      checkAuthorization()
     });
+    
 
     return {
+      hasAuthorized,
       arrowsStyle,
       checkScroll,
       scrollAble,

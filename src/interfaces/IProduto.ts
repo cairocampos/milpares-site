@@ -56,3 +56,7 @@ export interface IProdutoCatalogo extends IProdutoPrecificacao{
 export interface IProduto extends IProdutoPrecificacao, IProdutoDados {
   codigo?:string;
 }
+
+export interface IProdutoClubeDesconto extends IProdutoCatalogo {
+  preco_clube_desconto:number;
+}

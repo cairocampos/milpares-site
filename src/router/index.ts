@@ -39,11 +39,11 @@ const routes: Array<RouteRecordRaw> = [
     name: 'revendedor',
     component: Revendedor,
   },
-  // {
-  //   path: '/clube-do-desconto',
-  //   name: 'clube-desconto',
-  //   component: ClubeDesconto,
-  // },
+  {
+    path: '/clube-do-desconto',
+    name: 'clube-desconto',
+    component: ClubeDesconto,
+  },
 ];
 
 

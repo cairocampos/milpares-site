@@ -110,7 +110,7 @@
                   type="radio"
                   value="f"
                 >
-                <label for="f">Masculino</label>
+                <label for="f">Feminino</label>
               </div>
               <div class="form-group">
                 <input

@@ -119,7 +119,7 @@
 
 <script lang="ts">
 import CarrinhoVazio from "@/components/carrinho/CarrinhoVazio.vue";
-import { IProdutoCatalogo } from "@/interfaces/IProduto";
+import { IProdutoClubeDesconto } from "@/interfaces/IProduto";
 import { defineComponent, onMounted, ref, watch } from "vue";
 import { useStore } from "vuex";
 import { ICarrinho } from "@/interfaces/ICarrinho";
@@ -163,14 +163,14 @@ export default defineComponent({
       await Promise.all(carrinho.value.map(item => fetchVariacoes(item)))
     }
 
-    const produtos = ref<IProdutoCatalogo[]>();
+    const produtos = ref<IProdutoClubeDesconto[]>();
     const fetchProdutos = async () => {
       try {
         variacoes.value = [];
         loading.value = true;
         await setVariacoes();
         const items = carrinho.value.map((item) => item.id);
-        const { data } = await http.get<IProdutoCatalogo[]>("/produtos/catalogo/items", {
+        const { data } = await http.get<IProdutoClubeDesconto[]>("/produtos/catalogo/items", {
           params: {
             produto_ids: [...new Set(items)],
           },
@@ -187,11 +187,18 @@ export default defineComponent({
       const produto = produtos.value?.find((item) => item.id === produtoId);
       return produto ?? null;
     };
+
+    const hasAuthorized = ref(false);
+    const checkAuthorization = () => {
+      const auth = localStorage.getItem('milpares_authorization')
+      hasAuthorized.value = auth ? true : false;
+    }
+
     const getProdutoPreco = (produtoId: number, quantidade: number) => {
       const { toBRL } = useCurrency();
       const produto = produtos.value?.find((item) => item.id === produtoId);
       if (produto) {
-        const total = produto.preco * quantidade;
+        const total = (hasAuthorized.value ? produto.preco_clube_desconto :  produto.preco) * quantidade;
         return produto ? toBRL(total) : null;
       }
 
@@ -256,10 +263,19 @@ export default defineComponent({
 
     const sendForm = async () => {
       try {
+        let headers = {}
+        const token = localStorage.getItem('milpares_authorization');
+        if(token) {
+          headers = {'X-Authorization': token}
+        }
         alerts.showLoading("Processando seu pedido...");
         const { data } = await http.post<{ link: string }>("/pedidos", {
           ...form.value,
           items: carrinho.value,
+        }, {
+          headers: {
+            ...headers
+          }
         });
         window.open(data.link, "_blank");
       } catch (error) {
@@ -293,6 +309,7 @@ export default defineComponent({
     onMounted(() => {
       store.dispatch("verificarCarrinho");
       carrinho.value = store.getters.getCarrinho;
+      checkAuthorization()
       // fetchProdutos();
     });
     return {
