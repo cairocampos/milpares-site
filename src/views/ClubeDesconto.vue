@@ -222,7 +222,7 @@ export default defineComponent({
         },
         page: paginate.value.current_page,
       });
-      const { data: {data, ...meta} } = await http.get<{data: ProdutoClubeDesconto[]} & IPaginate>(`/clube-desconto?${filtro}`);
+      const { data: {data, meta} } = await http.get<{data: ProdutoClubeDesconto[]; meta: IPaginate}>(`/clube-desconto?${filtro}`);
       produtos.value.push(...data);
       paginate.value = meta;
       loading.value = false;
