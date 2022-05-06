@@ -47,7 +47,7 @@
           </router-link>
         </li>
         <li @click="closeNavigator">
-          <router-link to="/clube-desconto">
+          <router-link to="/clube-do-desconto">
             Clube do Desconto
           </router-link>
         </li>

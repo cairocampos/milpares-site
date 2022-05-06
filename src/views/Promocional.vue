@@ -177,8 +177,12 @@ export default defineComponent({
 
     const loading = ref(false);
 
+    const loadingMoreProdutos = ref(false)
     const fetchProdutos = async () => {
-      loading.value = true;
+      if(!produtos.value.length) {
+        loadingMoreProdutos.value = true
+        loading.value = true;
+      }
       const filtro = useSearchParams({
         filtros: {
           categoria: categoriaSelected.value,
@@ -191,6 +195,7 @@ export default defineComponent({
       produtos.value.push(...data.data);
       paginate.value = data?.meta;
       loading.value = false;
+      loadingMoreProdutos.value = false;
     };
 
     const resetProdutos = () => {
@@ -225,6 +230,7 @@ export default defineComponent({
     });
 
     return {
+      loadingMoreProdutos,
       openNavCategorias,
       loading,
       categoriaSelected,
