@@ -26,7 +26,7 @@
         </div>
       </div>
       <input
-        v-model="form.nome"
+        v-model="form.name"
         type="text"
         placeholder="Nome"
       />
@@ -83,7 +83,7 @@ const props = defineProps({
 
 const loading = ref(false)
 const form = ref({
-  nome: "",
+  name: "",
   email:"",
   telefone:"",
   sexo: "m"
