@@ -89,7 +89,8 @@
           <span>Filtros</span>
         </i>
 
-        <Loading v-if="loading" />
+        <Loading v-if="loading && !produtos.length" />
+        
         <div
           v-else-if="produtos && produtos.length"
           class="product-card-div"
@@ -123,7 +124,7 @@
       v-if="podePaginar"
       class="see-more-button-div"
     >
-      <Loading v-if="loading" />
+      <Loading v-if="loadingMoreProdutos" />
       <button
         v-else
         @click="paginate.current_page++"
@@ -179,10 +180,8 @@ export default defineComponent({
 
     const loadingMoreProdutos = ref(false)
     const fetchProdutos = async () => {
-      if(!produtos.value.length) {
-        loadingMoreProdutos.value = true
-        loading.value = true;
-      }
+      loadingMoreProdutos.value = true
+      loading.value = true;
       const filtro = useSearchParams({
         filtros: {
           categoria: categoriaSelected.value,
