@@ -194,7 +194,7 @@ export default defineComponent({
         page: paginate.value.current_page,
       });
       const { data } = await http.get<{data: IProdutoCatalogo[], meta: IPaginate}>(`/produtos?${filtro}`);
-      produtos.value = data.data;
+      produtos.value.push(...data.data);
       paginate.value = data?.meta;
       loading.value = false;
     };
