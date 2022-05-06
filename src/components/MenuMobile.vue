@@ -42,8 +42,13 @@
           </router-link>
         </li>
         <li @click="closeNavigator">
-          <router-link to="/produtos/promocao">
+          <router-link to="/promocao">
             Promoção
+          </router-link>
+        </li>
+        <li @click="closeNavigator">
+          <router-link to="/clube-desconto">
+            Clube do Desconto
           </router-link>
         </li>
         <li @click="closeNavigator">
@@ -53,10 +58,9 @@
           >Franqueado</a>
         </li>
         <li @click="closeNavigator">
-          <a
-            :href="PAINEL_MILPARES"
-            target="_blank"
-          >Revendedor</a>
+          <router-link to="/revendedor">
+            Revendedor
+          </router-link>
         </li>
       </ul>
     </div>

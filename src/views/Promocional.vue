@@ -59,7 +59,7 @@
       </button>
     </div>
     <main class="main-content">
-      <div class="side-categories">
+      <div class="side-categories desktop">
         <hr />
         <h3>Categorias</h3>
         <hr />
@@ -573,7 +573,7 @@ export default defineComponent({
     justify-content: center;
   }
 
-  .side-categories {
+  .side-categories.desktop {
     display: none;
   }
 
