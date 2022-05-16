@@ -122,8 +122,14 @@
                 </button>
               </div>
               <div v-else>
-                <span>Por Apenas: </span>
-                <span>R$ {{ toBRL(produto.preco_clube_desconto) }}</span>
+                <div>
+                  <span>De: </span>
+                  <span class="price_1">R$ {{ toBRL(produto.preco) }}</span>
+                </div>
+                <div>
+                  <span>Por Apenas: </span>
+                  <span class="price_2">R$ {{ toBRL(produto.preco_clube_desconto) }}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -558,7 +564,14 @@ export default defineComponent({
   color: #a5a5a5;
 }
 
-.card div span:nth-of-type(2) {
+.card div span.price_1 {
+  padding: 1rem 0rem;
+  font-family: Gotham-Bold;
+  color: #ef2765;
+  font-size: 1rem;
+}
+
+.card div span.price_2 {
   padding: 1rem 0rem;
   font-family: Gotham-Bold;
   color: #ef2765;

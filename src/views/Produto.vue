@@ -77,7 +77,7 @@
 
         <div class="slideshow-container">
           <Carousel
-            :items-to-show="1.5"
+            :items-to-show="1"
             :autoplay="2000"
           >
             <Slide
@@ -709,6 +709,15 @@ input[type="radio"]:checked ~ span:first-of-type {
   display: none;
 }
 
+.slideshow-container {
+  margin-top: 64px;
+}
+.slideshow-container img {
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+}
+
 /* ============ Products Card End ============ */
 
 @media only screen and (max-width: 1100px) {
@@ -739,6 +748,7 @@ input[type="radio"]:checked ~ span:first-of-type {
   .dots {
     display: block;
   }
+  
   .description-section {
     padding: 1rem 1rem;
   }
