@@ -277,7 +277,13 @@ export default defineComponent({
             ...headers
           }
         });
-        window.open(data.link, "_blank");
+
+        if(window.innerWidth >= 800) {
+          window.open(data.link, "_blank");
+        } else {
+          location.href = data.link
+        }
+
       } catch (error) {
         alerts.error("Algo inesperado aconteceu");
         console.log(error);
